@@ -3,54 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-  --background: #0f172a;
-  --foreground: #f8fafc; 
-
-  --card: #1e293b; 
-  --card-foreground: #f8fafc;
-
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
-
-  --primary: #f8fafc;
-  --primary-foreground: #0f172a;
-
-  --secondary: #334155;
-  --secondary-foreground: #f8fafc;
-
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-
-  --accent: #0585FE;
-  --accent-foreground: #ffffff;
-
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
-
-  --border: #334155;
-  --input: #1e293b;
-  --ring: #0585FE80;
-
-  --radius: 0.5rem;
-
-  --sidebar: #0f172a;
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #f8fafc;
-  --sidebar-primary-foreground: #0f172a;
-  --sidebar-accent: #1e293b;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: #334155;
-  --sidebar-ring: #0585FE80;
-
-  --chart-1: #0585FE;
-  --chart-2: #38bdf8;
-  --chart-3: #10b981;
-  --chart-4: #f59e0b;
-  --chart-5: #ec4899;
-}
-
-.dark {
+:root { 
   --background: #ffffff;
   --foreground: #1f2937;
 
@@ -79,6 +32,8 @@
   --input: #f1f5f9;
   --ring: #0585FE80;
 
+  --radius: 0.5rem;
+
   --sidebar: #ffffff;
   --sidebar-foreground: #1f2937;
   --sidebar-primary: #1f2937;
@@ -93,6 +48,47 @@
   --chart-3: #10b981;
   --chart-4: #f59e0b;
   --chart-5: #ec4899;
+}
+
+.dark { 
+  --background: #0f172a;
+  --foreground: #f8fafc;
+
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
+
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
+
+  --secondary: #334155;
+  --secondary-foreground: #f8fafc;
+
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --accent: #0585FE;
+  --accent-foreground: #ffffff;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #334155;
+  --input: #1e293b;
+  --ring: #0585FE80;
+
+
+  --sidebar: #0f172a;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #f8fafc;
+  --sidebar-primary-foreground: #0f172a;
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #334155;
+  --sidebar-ring: #0585FE80;
+
 }
 
 
@@ -116,6 +112,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
