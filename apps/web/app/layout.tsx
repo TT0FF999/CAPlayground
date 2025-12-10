@@ -1,23 +1,23 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Source_Sans_3 } from "next/font/google"
+import { Outfit } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Favicon } from "@/components/favicon"
 import UnofficialDomainBanner from "@/components/unofficial-domain-banner"
 import { PostHogProvider } from "@/components/posthog-provider"
 
-const sourceSans = Source_Sans_3({
+const outfit = Outfit({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-source-sans",
-  weight: ["400", "600"],
+  variable: "--font-outfit", 
+  weight: ["300", "400", "600", "800"], 
 })
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: "CAPlayground - CA Wallpaper Editor",
-  description: "Create beautiful animated wallpapers for iOS and iPadOS on any desktop computer",
+  title: "CAPlayground - Fonds d'écran Animés iOS", 
+  description: "Créez de magnifiques fonds d'écran animés pour iOS et iPadOS directement depuis votre ordinateur.",
   verification: {
     google: "5CfgPBQMN4wnoC3Va9OnlfALRYaoLEekJkqMkGKLXOc",
   },
@@ -52,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${sourceSans.variable}`} suppressHydrationWarning>
+    <html lang="fr" className={`${outfit.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased min-h-screen bg-background text-foreground">
         <PostHogProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
