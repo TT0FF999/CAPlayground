@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
     --background: #ffffff;
     --foreground: #1f2937;
@@ -29,11 +30,11 @@
     --input: #f1f5f9;
     --ring: #f43f5e80;
 
-    --chart-1: #f43f5e;
+    --chart-1: #f43f5e; 
     --chart-2: #dc2626; 
-    --chart-3: #ffffff;
-    --chart-4: #000000;
-    --chart-5: #991b1b; 
+    --chart-3: #ffffff; 
+    --chart-4: #000000; 
+    --chart-5: #991b1b;
 
     --radius: 0.5rem;
     
@@ -52,7 +53,7 @@
 }
 
 .dark {
-    --background: #0f172a;
+    --background: #000000; 
     --foreground: #f8fafc;
     
     --card: #1e293b;
@@ -78,10 +79,10 @@
     --input: #1e293b;
     --ring: #f43f5e80;
 
-    --chart-1: #f43f5e;
+    --chart-1: #ef4444;
     --chart-2: #dc2626;
-    --chart-3: #000000;
-    --chart-4: #ffffff; 
+    --chart-3: #991b1b; 
+    --chart-4: #222222; 
     --chart-5: #450a0a;
 
     --sidebar: #111827;
@@ -121,37 +122,38 @@ body {
     border-radius: 50%;
     filter: blur(80px);
     opacity: 0.8;
-    animation: float 10s infinite ease-in-out alternate;
+    animation: float 10s infinite ease-in-out alternate; 
 }
 
 .blob-1 {
-    top: -10%;
-    left: -10%;
-    width: 50vw;
-    height: 50vw;
-    background: linear-gradient(180deg, var(--chart-1) 0%, var(--chart-2) 100%);
+    top: -10%; 
+    left: -10%; 
+    width: 50vw; 
+    height: 50vw; 
+    background: radial-gradient(circle, var(--chart-1) 0%, var(--chart-2) 70%); 
     animation-delay: 0s;
 }
 
 .blob-2 {
-    bottom: -10%;
-    right: -10%;
-    width: 60vw;
-    height: 60vw;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%);
-    animation-delay: -2s;
-    animation-duration: 15s;
+    bottom: -10%; 
+    right: -10%; 
+    width: 60vw; 
+    height: 60vw; 
+    background: linear-gradient(315deg, var(--chart-3) 30%, var(--chart-4) 100%); 
+    animation-delay: -2s; 
+    animation-duration: 15s; 
+    opacity: 0.6;
 }
 
 .blob-3 {
-    top: 40%;
-    left: 40%;
-    width: 40vw;
-    height: 40vw;
-    background: linear-gradient(180deg, var(--chart-2) 0%, var(--chart-4) 100%);
-    animation-delay: -5s;
-    animation-duration: 12s;
-    opacity: 0.5;
+    top: 40%; 
+    left: 40%; 
+    width: 40vw; 
+    height: 40vw; 
+    background: radial-gradient(circle, var(--chart-4) 0%, transparent 80%); 
+    animation-delay: -5s; 
+    animation-duration: 12s; 
+    opacity: 0.5; 
 }
 
 @keyframes float {
