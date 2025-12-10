@@ -11,7 +11,7 @@ const Button = ({ children, className, variant = 'default', size = 'default', on
   let baseClasses = "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   
   if (variant === 'ghost') baseClasses += " bg-transparent hover:bg-gray-200/50 dark:hover:bg-gray-700/50";
-  if (variant === 'outline') baseClasses += " liquid-button border border-border/50 text-foreground hover:bg-white/15 dark:hover:bg-white/10";
+  if (variant === 'outline') baseClasses += " border border-border bg-background/50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700";
   if (variant === 'default') baseClasses += " bg-accent text-accent-foreground hover:bg-accent/90";
 
   if (size === 'icon') baseClasses += " h-10 w-10 p-0";
@@ -196,8 +196,9 @@ export function SettingsPanel({
       <div
         className={cn(
           "fixed top-0 right-0 h-full z-[1001] shadow-2xl",
-          "glass-panel",
-          "border-l border-border/50", 
+          // MODIFICATION: Augmentation de la transparence de l'arrière-plan (Light: /90 -> /60 | Dark: /80 -> /50)
+          "bg-white/60 backdrop-blur-3xl border-l border-white/50", 
+          "dark:bg-gray-900/50 dark:border-gray-800/50",
           "rounded-l-3xl", 
           "w-full md:w-[500px] lg:w-[600px]",
           "transform transition-transform duration-300 ease-out",
@@ -209,7 +210,7 @@ export function SettingsPanel({
         aria-label="Settings"
       >
         {}
-        <div className="flex items-center justify-between gap-2 p-4 border-b border-border/50">
+        <div className="flex items-center justify-between gap-2 p-4 border-b border-gray-300 dark:border-gray-700">
           <h2 className="text-xl font-bold">Editor Settings</h2>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-black/70 dark:text-white/80 hover:bg-white/50 dark:hover:bg-gray-700/50" aria-label="Close settings" onClick={onClose}>
             <X className="h-5 w-5" />
@@ -294,8 +295,8 @@ export function SettingsPanel({
           {}
           <div className="space-y-4 pt-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Keyboard Shortcuts</h3>
-            {}
-            <div className="space-y-2 text-sm bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm p-3 rounded-lg border border-border/30">
+            {/* MODIFICATION: Augmentation de la transparence de l'arrière-plan du bloc de raccourcis */}
+            <div className="space-y-2 text-sm bg-gray-100/30 dark:bg-gray-800/30 p-3 rounded-lg border border-gray-200/50 dark:border-gray-700/50">
               <div className="flex items-center justify-between"><span>Undo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Z</span></div>
               <div className="flex items-center justify-between"><span>Redo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + Z</span></div>
               <div className="flex items-center justify-between"><span>Zoom In</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + +</span></div>
@@ -368,7 +369,7 @@ export function SettingsPanel({
           </div>
 
           {}
-          <div className="py-6 border-t border-border/50">
+          <div className="py-6 border-t border-gray-300 dark:border-gray-700">
             <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               Version: {latestVersion ?? '...'}
             </div>
