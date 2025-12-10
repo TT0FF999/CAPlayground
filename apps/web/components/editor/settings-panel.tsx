@@ -10,9 +10,15 @@ const X = (props) => (
 const Button = ({ children, className, variant = 'default', size = 'default', onClick, ...props }) => {
   let baseClasses = "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   
-  if (variant === 'ghost') baseClasses += " bg-transparent hover:bg-gray-200/50 dark:hover:bg-gray-700/50";
-  if (variant === 'outline') baseClasses += " border border-border bg-background/50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700";
-  if (variant === 'default') baseClasses += " bg-accent text-accent-foreground hover:bg-accent/90";
+  if (variant === 'ghost') {
+    baseClasses += " bg-transparent hover:bg-white/10 dark:hover:bg-gray-700/50";
+  }
+  if (variant === 'outline') {
+    baseClasses += " liquid-button bg-white/5 dark:bg-white/10 backdrop-blur-xl border border-white/20 dark:border-white/20 shadow-lg shadow-black/30 hover:bg-white/15 dark:hover:bg-white/15 text-foreground dark:text-white";
+  }
+  if (variant === 'default') {
+    baseClasses += " liquid-button bg-accent hover:bg-accent/90 text-white font-semibold shadow-xl shadow-accent/30 hover:shadow-accent/40";
+  }
 
   if (size === 'icon') baseClasses += " h-10 w-10 p-0";
   if (size === 'sm') baseClasses += " h-8 px-3 text-sm";
@@ -37,8 +43,8 @@ const Switch = ({ checked, onCheckedChange, id, ...props }) => (
     aria-checked={checked}
     onClick={() => onCheckedChange(!checked)}
     className={cn(
-      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", // Mise à jour: focus:ring-ring
-      checked ? "bg-accent" : "bg-gray-300 dark:bg-gray-600"
+      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-white/20 dark:border-white/10 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+      checked ? "bg-accent" : "bg-white/10 dark:bg-gray-900/10"
     )}
     {...props}
   >
@@ -60,7 +66,7 @@ const Slider = ({ value, min, max, step, onValueChange, id }) => (
     step={step}
     value={value[0]}
     onChange={(e) => onValueChange([Number(e.target.value)])}
-    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+    className="w-full h-2 bg-white/20 dark:bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:bg-accent [&::-moz-range-thumb]:bg-accent"
   />
 );
 
@@ -133,8 +139,8 @@ export function SettingsPanel({
   const [showAnchorPoint, setShowAnchorPoint] = useLocalStorage("caplay_preview_anchor_point", false);
   const [autoClosePanels, setAutoClosePanels] = useLocalStorage("caplay_settings_auto_close_panels", true);
   const [pinchZoomSensitivity, setPinchZoomSensitivity] = useLocalStorage("caplay_settings_pinch_zoom_sensitivity", 1);
-  const [showGeometryResize, setShowGeometryResize] = useLocalStorage("caplay_settings_show_geometry_resize", false); // NOUVEAU
-  const [showAlignButtons, setShowAlignButtons] = useLocalStorage("caplay_settings_show_align_buttons", false); // NOUVEAU
+  const [showGeometryResize, setShowGeometryResize] = useLocalStorage("caplay_settings_show_geometry_resize", false); 
+  const [showAlignButtons, setShowAlignButtons] = useLocalStorage("caplay_settings_show_align_buttons", false); 
 
   useEffect(() => setMounted(true), []);
 
@@ -182,7 +188,6 @@ export function SettingsPanel({
 
   return createPortal(
     <>
-      {}
       <div
         aria-hidden
         className={cn(
@@ -192,12 +197,9 @@ export function SettingsPanel({
         onClick={onClose}
       />
       
-      {}
       <div
         className={cn(
           "fixed top-0 right-0 h-full z-[1001] shadow-2xl",
-          // CHANGEMENT POUR ADOPTER LE THÈME GLASMORPHISM (basé sur page.tsx)
-          // Très faible opacité + flou intense + bordures claires
           "bg-white/5 backdrop-blur-3xl border-l border-white/20", 
           "dark:bg-gray-900/10 dark:border-white/20",
           "rounded-l-3xl", 
@@ -210,18 +212,15 @@ export function SettingsPanel({
         aria-modal="true"
         aria-label="Settings"
       >
-        {}
-        <div className="flex items-center justify-between gap-2 p-4 border-b border-gray-300 dark:border-gray-700">
+        <div className="flex items-center justify-between gap-2 p-4 border-b border-gray-300/30 dark:border-gray-700/30">
           <h2 className="text-xl font-bold">Editor Settings</h2>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-black/70 dark:text-white/80 hover:bg-white/50 dark:hover:bg-gray-700/50" aria-label="Close settings" onClick={onClose}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-black/70 dark:text-white/80" aria-label="Close settings" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
         </div>
 
-        {}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
           
-          {}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Snapping</h3>
             <div className="space-y-4">
@@ -242,7 +241,6 @@ export function SettingsPanel({
                 <Switch id="snap-rotation" checked={!!snapRotationEnabled} onCheckedChange={(c) => setSnapRotationEnabled(!!c)} />
               </div>
               
-              {}
               <div className="space-y-2 pt-4"> 
                 <div className="flex items-center justify-between gap-3">
                   <Label htmlFor="snap-threshold" className="text-base">Sensitivity (px)</Label>
@@ -257,9 +255,9 @@ export function SettingsPanel({
             </div>
           </div>
           
-          {}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Layer Controls</h3>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Layer Controls 
+              </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="show-geometry-resize" className="text-base">Show geometry resize buttons</Label>
@@ -272,7 +270,6 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {}
           <div className="space-y-4 pt-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Preview</h3>
             <div className="space-y-4">
@@ -293,10 +290,8 @@ export function SettingsPanel({
             </div> 
           </div>
 
-          {}
           <div className="space-y-4 pt-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Keyboard Shortcuts</h3>
-            {/* CHANGEMENT POUR ADOPTER LE THÈME GLASMORPHISM */}
             <div className="space-y-2 text-sm bg-white/5 dark:bg-gray-900/10 p-3 rounded-lg border border-white/20 dark:border-white/20">
               <div className="flex items-center justify-between"><span>Undo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Z</span></div>
               <div className="flex items-center justify-between"><span>Redo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + Z</span></div>
@@ -315,7 +310,6 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {}
           <div className="space-y-4 pt-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Panels</h3>
             <div className="space-y-3 text-sm">
@@ -352,7 +346,6 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {}
           <div className="space-y-4 pt-4">
             <Button
               variant="outline"
@@ -369,8 +362,7 @@ export function SettingsPanel({
             </Button>
           </div>
 
-          {}
-          <div className="py-6 border-t border-gray-300 dark:border-gray-700">
+          <div className="py-6 border-t border-gray-300/30 dark:border-gray-700/30">
             <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               Version: {latestVersion ?? '...'}
             </div>
