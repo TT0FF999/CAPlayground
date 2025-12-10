@@ -93,13 +93,6 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen flex flex-col dark:text-white"> 
       <div className="relative">
-        
-        {}
-        <div className="blob-cont"> 
-          <div className="blob blob-1"></div>
-          <div className="blob blob-2"></div>
-          <div className="blob blob-3"></div>
-        </div>
 
         {}
         <Navigation className="z-20 sticky top-0 glass-panel backdrop-blur-xl border border-white/20 dark:border-white/20 shadow-lg shadow-black/30 border-b-0" /> 
