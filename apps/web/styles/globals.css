@@ -4,96 +4,97 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;      
-  --foreground: #1f2937;          
+  --background: #0f172a;
+  --foreground: #f8fafc; 
 
-  --card: #f1f5f9;     
-  --card-foreground: #1f2937;     
+  --card: #1e293b; 
+  --card-foreground: #f8fafc;
 
-  --popover: #ffffff;        
-  --popover-foreground: #1f2937;   
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
 
-  --primary: #1f2937;         
-  --primary-foreground: #ffffff;
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
 
-  --secondary: #6b7280;   
-  --secondary-foreground: #ffffff;  
+  --secondary: #334155;
+  --secondary-foreground: #f8fafc;
 
-  --muted: #f1f5f9;  
-  --muted-foreground: #6b7280; 
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
 
-  --accent: #0585FE;    
-  --accent-foreground: #ffffff;    
+  --accent: #0585FE;
+  --accent-foreground: #ffffff;
 
-  --destructive: #dc2626;      
-  --destructive-foreground: #ffffff; 
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
 
-  --border: #d1d5db;         
-  --input: #f1f5f9;               
-  --ring: #0585FE80;             
+  --border: #334155;
+  --input: #1e293b;
+  --ring: #0585FE80;
 
   --radius: 0.5rem;
 
-  --sidebar: #ffffff; 
-  --sidebar-foreground: #1f2937;  
-  --sidebar-primary: #1f2937;    
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9; 
-  --sidebar-accent-foreground: #1f2937; 
-  --sidebar-border: #d1d5db;      
-  --sidebar-ring: #0585FE80;       
-
-  --chart-1: #0585FE;
-  --chart-2: #38bdf8; 
-  --chart-3: #10b981; 
-  --chart-4: #f59e0b; 
-  --chart-5: #ec4899; 
-}
-
-.dark {
-  --background: #0f172a;     
-  --foreground: #f8fafc;      
-
-  --card: #1e293b;              
-  --card-foreground: #f8fafc;     
-
-  --popover: #1e293b;      
-  --popover-foreground: #f8fafc;  
-
-  --primary: #f8fafc;  
-  --primary-foreground: #0f172a; 
-
-  --secondary: #334155;  
-  --secondary-foreground: #f8fafc; 
-
-  --muted: #1e293b;                
-  --muted-foreground: #94a3b8;    
-
-  --accent: #0585FE;      
-  --accent-foreground: #ffffff;      
-
-  --destructive: #dc2626;         
-  --destructive-foreground: #ffffff;
-
-  --border: #334155;            
-  --input: #1e293b;                
-  --ring: #0585FE80;             
-  
-  --sidebar: #0f172a;   
-  --sidebar-foreground: #f8fafc; 
-  --sidebar-primary: #f8fafc; 
+  --sidebar: #0f172a;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #f8fafc;
   --sidebar-primary-foreground: #0f172a;
-  --sidebar-accent: #1e293b; 
+  --sidebar-accent: #1e293b;
   --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: #334155;     
-  --sidebar-ring: #0585FE80; 
-  
+  --sidebar-border: #334155;
+  --sidebar-ring: #0585FE80;
+
   --chart-1: #0585FE;
   --chart-2: #38bdf8;
   --chart-3: #10b981;
   --chart-4: #f59e0b;
   --chart-5: #ec4899;
 }
+
+.dark {
+  --background: #ffffff;
+  --foreground: #1f2937;
+
+  --card: #f1f5f9;
+  --card-foreground: #1f2937;
+
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
+
+  --primary: #1f2937;
+  --primary-foreground: #ffffff;
+
+  --secondary: #6b7280;
+  --secondary-foreground: #ffffff;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #6b7280;
+
+  --accent: #0585FE;
+  --accent-foreground: #ffffff;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #d1d5db;
+  --input: #f1f5f9;
+  --ring: #0585FE80;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1f2937;
+  --sidebar-primary: #1f2937;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #1f2937;
+  --sidebar-border: #d1d5db;
+  --sidebar-ring: #0585FE80;
+
+  --chart-1: #0585FE;
+  --chart-2: #38bdf8;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #ec4899;
+}
+
 
 @theme inline {
   --color-background: var(--background);
@@ -121,7 +122,7 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --radius-sm: calc(var(--radius) - 2px); 
+  --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
