@@ -15,18 +15,18 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-  title: "CAPlayground - Éditeur de Fonds d'écran Animés",
-  description: "Créez de magnifiques fonds d'écran animés pour iOS et iPadOS sur n'importe quel ordinateur de bureau",
+  title: "CAPlayground - CA Wallpaper Editor",
+  description: "Create beautiful animated wallpapers for iOS and iPadOS on any desktop computer",
   verification: {
     google: "xNuTnO5iYYm2op2KXAClg0oYMmslpl35wOv-9RfySxU",
   },
   openGraph: {
-    title: "CAPlayground - Éditeur de Fonds d'écran Animés",
-    description: "Créez de magnifiques fonds d'écran animés pour iOS et iPadOS sur n'importe quel ordinateur de bureau",
+    title: "CAPlayground - CA Wallpaper Editor",
+    description: "Create beautiful animated wallpapers for iOS and iPadOS on any desktop computer",
     type: "website",
     images: [
-      { url: "/icon-light.png", alt: "CAPlayground icône (clair)" },
-      { url: "/icon-dark.png", alt: "CAPlayground icône (sombre)" },
+      { url: "/icon-light.png", alt: "CAPlayground icon (light)" },
+      { url: "/icon-dark.png", alt: "CAPlayground icon (dark)" },
     ],
   },
   icons: {
@@ -51,9 +51,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="fr" className={`${outfit.variable}`} suppressHydrationWarning>
+
+    <html lang="en" className={`${outfit.variable}`} suppressHydrationWarning>
       <body 
-        className="font-sans antialiased min-h-screen bg-white dark:bg-[#0f172a] dark:text-white"
+
+        className="font-sans antialiased min-h-screen dark:text-white"
       >
         <PostHogProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
