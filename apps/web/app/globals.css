@@ -223,7 +223,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
-.dark .glass-panel {
+[&:is(.dark)] .glass-panel {
     background: rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
@@ -252,7 +252,7 @@
     transform: translateY(-10px);
 }
 
-.dark .glass-card {
+[&:is(.dark)] .glass-card {
     background: rgba(0, 0, 0, 0.02);
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-left: 1px solid rgba(0, 0, 0, 0.1);
@@ -261,7 +261,7 @@
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
 }
 
-.dark .glass-card:hover {
+[&:is(.dark)] .glass-card:hover {
     background: rgba(0, 0, 0, 0.05);
     box-shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.2);
     border-color: rgba(0, 0, 0, 0.2);
@@ -273,7 +273,7 @@
     -webkit-text-fill-color: transparent;
     text-shadow: 0 2px 10px rgba(255,255,255,0.1);
 }
-.dark .glass-text {
+[&:is(.dark)] .glass-text {
     background: linear-gradient(to right, #1f2937, #6b7280);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -307,13 +307,13 @@
     border-color: rgba(255, 255, 255, 0.5);
 }
 
-.dark .liquid-button {
+[&:is(.dark)] .liquid-button {
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: var(--primary);
 }
 
-.dark .liquid-button:hover {
+[&:is(.dark)] .liquid-button:hover {
     background: rgba(0, 0, 0, 0.1);
     box-shadow: 0 0 10px rgba(5, 133, 254, 0.2);
     border-color: rgba(0, 0, 0, 0.3);
