@@ -15,7 +15,7 @@
     --secondary-foreground: #ffffff;
     --muted: #f1f5f9;
     --muted-foreground: #1f2937;
-    --accent: #5ad197; 
+    --accent: #5ad197;
     --accent-foreground: #ffffff;
     --destructive: #be123c;
     --destructive-foreground: #ffffff;
@@ -25,8 +25,8 @@
     --chart-1: #6366f1;
     --chart-2: #a855f7;
     --chart-3: #ec4899;
-    --chart-4: #f43f5e; 
-    --chart-5: #fbbf24; 
+    --chart-4: #f43f5e;
+    --chart-5: #fbbf24;
     --radius: 0.5rem;
     --sidebar: #f1f5f9;
     --sidebar-foreground: #1f2937;
@@ -82,13 +82,11 @@
 body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: 'Satoshi', 'Outfit', sans-serif; 
     overflow-x: hidden;
     transition: background-color 0.5s, color 0.5s;
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Satoshi', sans-serif;
 }
 
 .blob-cont {
