@@ -1,27 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const filePath = path.join(process.cwd(), 'public', 'templates', 'tendies.zip');
+    const staticPath = '/templates/tendies.zip';
 
-    const templateBuffer = await fs.readFile(filePath);
+    const redirectUrl = new URL(staticPath, request.nextUrl.origin);
 
-    return new NextResponse(new Uint8Array(templateBuffer), {
-      headers: {
-        'Content-Type': 'application/zip',
-        'Content-Disposition': 'attachment; filename="tendies.zip"',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    });
+    return NextResponse.redirect(redirectUrl, 302);
   } catch (error) {
     console.error('Error serving tendies template:', error);
 
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred during redirection setup.';
+
     return NextResponse.json(
-      { error: 'Failed to load tendies template', details: error instanceof Error ? (error as Error).message : 'Unknown error' },
+      { error: 'Failed to process template request', details: errorMessage },
       { status: 500 }
     );
   }
