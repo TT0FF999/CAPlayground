@@ -126,7 +126,7 @@ export function SettingsPanel({
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* Snapping */}
+          {}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Snapping</h3>
             <div className="space-y-3">
@@ -156,7 +156,7 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {/* Layer Controls */}
+          {}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Layer Controls</h3>
             <div className="space-y-3">
@@ -171,7 +171,7 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {/* Preview */}
+          {}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Preview</h3>
             <div className="space-y-3">
@@ -189,7 +189,7 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {/* Keyboard Shortcuts */}
+          {}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Keyboard Shortcuts</h3>
             <div className="space-y-2 text-sm">
@@ -210,7 +210,7 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {/* Panels */}
+          {}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Panels</h3>
             <div className="space-y-3 text-sm">
@@ -247,7 +247,7 @@ export function SettingsPanel({
             </div>
           </div>
 
-          {/* Other */}
+          {}
           <div className="space-y-4">
             <Button
               variant="outline"
@@ -264,7 +264,7 @@ export function SettingsPanel({
             </Button>
           </div>
 
-          {/* Version info */}
+          {}
           <div className="pt-4 border-t">
             <div className="text-xs text-muted-foreground text-center">
               Version: {latestVersion ?? '...'}
@@ -274,5 +274,31 @@ export function SettingsPanel({
       </div>
     </>,
     document.body
+  );
+}
+
+export default function App() {
+  const [isOpen, setIsOpen] = useState(true);
+  const [leftWidth, setLeftWidth] = useState(320);
+  const [rightWidth, setRightWidth] = useState(400);
+  const [statesHeight, setStatesHeight] = useState(350);
+
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
+      <Button onClick={() => setIsOpen(true)}>Open Settings Panel</Button>
+      <SettingsPanel
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        latestVersion="1.2.0"
+        leftWidth={leftWidth}
+        rightWidth={rightWidth}
+        statesHeight={statesHeight}
+        setLeftWidth={setLeftWidth}
+        setRightWidth={setRightWidth}
+        setStatesHeight={setStatesHeight}
+        showLeft={true}
+        showRight={true}
+      />
+    </div>
   );
 }
