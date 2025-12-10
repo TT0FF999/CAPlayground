@@ -55,15 +55,20 @@ export default function RootLayout({
     <html lang="en" className={`${outfit.variable}`} suppressHydrationWarning>
       <body 
 
-        className="font-sans antialiased min-h-screen dark:text-white"
+        className="font-sans antialiased min-h-screen bg-white dark:bg-[#0f172a]"
       >
-        <PostHogProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <PostHogProvider>
             <UnofficialDomainBanner />
-            <Favicon />
             {children}
-          </ThemeProvider>
-        </PostHogProvider>
+            <Favicon />
+          </PostHogProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
