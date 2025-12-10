@@ -10,10 +10,8 @@ const X = (props) => (
 const Button = ({ children, className, variant = 'default', size = 'default', onClick, ...props }) => {
   let baseClasses = "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   
-  if (variant === 'ghost') baseClasses += " bg-transparent hover:bg-muted/50 text-foreground";
-  
-  if (variant === 'outline') baseClasses += " liquid-button border border-border/50 text-card-foreground hover:bg-white/15 dark:hover:bg-white/10";
-
+  if (variant === 'ghost') baseClasses += " bg-transparent hover:bg-gray-200/50 dark:hover:bg-gray-700/50";
+  if (variant === 'outline') baseClasses += " liquid-button border border-border/50 text-foreground hover:bg-white/15 dark:hover:bg-white/10";
   if (variant === 'default') baseClasses += " bg-accent text-accent-foreground hover:bg-accent/90";
 
   if (size === 'icon') baseClasses += " h-10 w-10 p-0";
@@ -39,8 +37,8 @@ const Switch = ({ checked, onCheckedChange, id, ...props }) => (
     aria-checked={checked}
     onClick={() => onCheckedChange(!checked)}
     className={cn(
-      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-      checked ? "bg-accent" : "bg-input dark:bg-secondary/50 border-2 border-border/50"
+      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", // Mise à jour: focus:ring-ring
+      checked ? "bg-accent" : "bg-gray-300 dark:bg-gray-600"
     )}
     {...props}
   >
@@ -62,13 +60,7 @@ const Slider = ({ value, min, max, step, onValueChange, id }) => (
     step={step}
     value={value[0]}
     onChange={(e) => onValueChange([Number(e.target.value)])}
-    className={cn(
-      "w-full h-2 rounded-lg appearance-none cursor-pointer",
-      "bg-input/80 dark:bg-muted/70",
-      "[&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none",
-      "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent",
-      "[&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:transition-colors"
-    )}
+    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
   />
 );
 
@@ -141,8 +133,8 @@ export function SettingsPanel({
   const [showAnchorPoint, setShowAnchorPoint] = useLocalStorage("caplay_preview_anchor_point", false);
   const [autoClosePanels, setAutoClosePanels] = useLocalStorage("caplay_settings_auto_close_panels", true);
   const [pinchZoomSensitivity, setPinchZoomSensitivity] = useLocalStorage("caplay_settings_pinch_zoom_sensitivity", 1);
-  const [showGeometryResize, setShowGeometryResize] = useLocalStorage("caplay_settings_show_geometry_resize", false);
-  const [showAlignButtons, setShowAlignButtons] = useLocalStorage("caplay_settings_show_align_buttons", false);
+  const [showGeometryResize, setShowGeometryResize] = useLocalStorage("caplay_settings_show_geometry_resize", false); // NOUVEAU
+  const [showAlignButtons, setShowAlignButtons] = useLocalStorage("caplay_settings_show_align_buttons", false); // NOUVEAU
 
   useEffect(() => setMounted(true), []);
 
@@ -190,6 +182,7 @@ export function SettingsPanel({
 
   return createPortal(
     <>
+      {}
       <div
         aria-hidden
         className={cn(
@@ -199,11 +192,12 @@ export function SettingsPanel({
         onClick={onClose}
       />
       
+      {}
       <div
         className={cn(
           "fixed top-0 right-0 h-full z-[1001] shadow-2xl",
           "glass-panel",
-          "border-l border-border",
+          "border-l border-border/50", 
           "rounded-l-3xl", 
           "w-full md:w-[500px] lg:w-[600px]",
           "transform transition-transform duration-300 ease-out",
@@ -214,23 +208,20 @@ export function SettingsPanel({
         aria-modal="true"
         aria-label="Settings"
       >
-        <div className="flex items-center justify-between gap-2 p-4 border-b border-border">
-          <h2 className="text-xl font-bold text-foreground">Editor Settings</h2>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-foreground/70 hover:bg-muted/50" 
-            aria-label="Close settings" 
-            onClick={onClose}
-          >
+        {}
+        <div className="flex items-center justify-between gap-2 p-4 border-b border-border/50">
+          <h2 className="text-xl font-bold">Editor Settings</h2>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-black/70 dark:text-white/80 hover:bg-white/50 dark:hover:bg-gray-700/50" aria-label="Close settings" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
         </div>
 
+        {}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-8">
           
+          {}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Snapping</h3>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Snapping</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="snap-edges" className="text-base">Snap to canvas edges</Label>
@@ -249,21 +240,24 @@ export function SettingsPanel({
                 <Switch id="snap-rotation" checked={!!snapRotationEnabled} onCheckedChange={(c) => setSnapRotationEnabled(!!c)} />
               </div>
               
+              {}
               <div className="space-y-2 pt-4"> 
                 <div className="flex items-center justify-between gap-3">
                   <Label htmlFor="snap-threshold" className="text-base">Sensitivity (px)</Label>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium w-6 text-right text-muted-foreground">{SNAP_THRESHOLD}</span>
-                    <Button variant="outline" size="sm" className="liquid-button" onClick={()=>{setSnapThreshold(12)}}>Reset</Button>
+                    <span className="text-sm font-medium w-6 text-right">{SNAP_THRESHOLD}</span>
+                    <Button variant="outline" size="sm" onClick={()=>{setSnapThreshold(12)}}>Reset</Button>
                   </div>
                 </div>
                 <Slider id="snap-threshold" value={[SNAP_THRESHOLD]} min={3} max={25} onValueChange={([c]) => setSnapThreshold(c)} />
               </div>
+              
             </div>
           </div>
           
+          {}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Layer Controls </h3>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Layer Controls</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="show-geometry-resize" className="text-base">Show geometry resize buttons</Label>
@@ -276,8 +270,9 @@ export function SettingsPanel({
             </div>
           </div>
 
+          {}
           <div className="space-y-4 pt-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Preview</h3>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Preview</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="show-anchor-point" className="text-base">Show anchor point</Label>
@@ -287,8 +282,8 @@ export function SettingsPanel({
                 <div className="flex items-center justify-between gap-3">
                   <Label htmlFor="pinch-zoom-sensitivity" className="text-base">Pinch to zoom sensitivity</Label>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium w-6 text-right text-muted-foreground">{pinchZoomSensitivity.toFixed(1)}</span>
-                    <Button variant="outline" size="sm" className="liquid-button" onClick={()=>{setPinchZoomSensitivity(1)}}>Reset</Button>
+                    <span className="text-sm font-medium w-6 text-right">{pinchZoomSensitivity.toFixed(1)}</span>
+                    <Button variant="outline" size="sm" onClick={()=>{setPinchZoomSensitivity(1)}}>Reset</Button>
                   </div>
                 </div>
                 <Slider id="pinch-zoom-sensitivity" value={[pinchZoomSensitivity]} min={0.5} max={2} step={0.1} onValueChange={([c]) => setPinchZoomSensitivity(c)} />
@@ -296,50 +291,53 @@ export function SettingsPanel({
             </div> 
           </div>
 
+          {}
           <div className="space-y-4 pt-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Keyboard Shortcuts</h3>
-            <div className="space-y-2 text-sm bg-muted/50 p-3 rounded-lg border border-border/50">
-              <div className="flex items-center justify-between"><span>Undo</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Z</span></div>
-              <div className="flex items-center justify-between"><span>Redo</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + Z</span></div>
-              <div className="flex items-center justify-between"><span>Zoom In</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + +</span></div>
-              <div className="flex items-center justify-between"><span>Zoom Out</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + -</span></div>
-              <div className="flex items-center justify-between"><span>Reset Zoom</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + 0</span></div>
-              <div className="flex items-center justify-between"><span>Export</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + E</span></div>
-              <div className="flex items-center justify-between"><span>Pan</span><span className="font-mono text-muted-foreground text-xs">Shift + Drag or Middle Click</span></div>
-              <div className="flex items-center justify-between"><span>Toggle Left Panel</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + L</span></div>
-              <div className="flex items-center justify-between"><span>Toggle Right Panel</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + I</span></div>
-              <div className="flex items-center justify-between"><span>Bring Forward</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + ]</span></div>
-              <div className="flex items-center justify-between"><span>Send Backward</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + [</span></div>
-              <div className="flex items-center justify-between"><span>Bring to Front</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + ]</span></div>
-              <div className="flex items-center justify-between"><span>Send to Back</span><span className="font-mono text-muted-foreground text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + [</span></div>
-              <div className="flex items-center justify-between"><span>Delete Layer</span><span className="font-mono text-muted-foreground text-xs">Delete</span></div>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Keyboard Shortcuts</h3>
+            {}
+            <div className="space-y-2 text-sm bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm p-3 rounded-lg border border-border/30">
+              <div className="flex items-center justify-between"><span>Undo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Z</span></div>
+              <div className="flex items-center justify-between"><span>Redo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + Z</span></div>
+              <div className="flex items-center justify-between"><span>Zoom In</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + +</span></div>
+              <div className="flex items-center justify-between"><span>Zoom Out</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + -</span></div>
+              <div className="flex items-center justify-between"><span>Reset Zoom</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + 0</span></div>
+              <div className="flex items-center justify-between"><span>Export</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + E</span></div>
+              <div className="flex items-center justify-between"><span>Pan</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">Shift + Drag or Middle Click</span></div>
+              <div className="flex items-center justify-between"><span>Toggle Left Panel</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + L</span></div>
+              <div className="flex items-center justify-between"><span>Toggle Right Panel</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + I</span></div>
+              <div className="flex items-center justify-between"><span>Bring Forward</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + ]</span></div>
+              <div className="flex items-center justify-between"><span>Send Backward</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + [</span></div>
+              <div className="flex items-center justify-between"><span>Bring to Front</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + ]</span></div>
+              <div className="flex items-center justify-between"><span>Send to Back</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + [</span></div>
+              <div className="flex items-center justify-between"><span>Delete Layer</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">Delete</span></div>
             </div>
           </div>
 
+          {}
           <div className="space-y-4 pt-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Panels</h3>
-            <div className="space-y-3 text-base">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Panels</h3>
+            <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="auto-close-panels" className="text-base">Auto-close right panel on narrow screens</Label>
                 <Switch id="auto-close-panels" checked={!!autoClosePanels} onCheckedChange={(c) => setAutoClosePanels(!!c)} />
               </div>
               <div className="flex items-center justify-between pt-2">
                 <span className="text-base">Left panel width</span>
-                <span className="font-mono text-muted-foreground text-xs">{leftWidth ?? '—'} px</span>
+                <span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{leftWidth ?? '—'} px</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-base">Right panel width</span>
-                <span className="font-mono text-muted-foreground text-xs">{rightWidth ?? '—'} px</span>
+                <span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{rightWidth ?? '—'} px</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-base">States panel height</span>
-                <span className="font-mono text-muted-foreground text-xs">{statesHeight ?? '—'} px</span>
+                <span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{statesHeight ?? '—'} px</span>
               </div>
               <div className="pt-4">
                 <Button
                   variant="outline"
                   size="default"
-                  className="w-full liquid-button"
+                  className="w-full"
                   onClick={() => {
                     setLeftWidth?.(320);
                     setRightWidth?.(400);
@@ -350,13 +348,13 @@ export function SettingsPanel({
                 </Button>
               </div>
             </div>
-           
           </div>
 
+          {}
           <div className="space-y-4 pt-4">
             <Button
               variant="outline"
-              className="w-full liquid-button"
+              className="w-full"
               onClick={() => {
                 if (typeof window !== 'undefined') {
                   window.dispatchEvent(new Event('caplay:start-onboarding'));
@@ -369,8 +367,9 @@ export function SettingsPanel({
             </Button>
           </div>
 
-          <div className="py-6 border-t border-border">
-            <div className="text-xs text-muted-foreground text-center">
+          {}
+          <div className="py-6 border-t border-border/50">
+            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               Version: {latestVersion ?? '...'}
             </div>
           </div>
@@ -388,7 +387,7 @@ export default function App() {
     const [statesHeight, setStatesHeight] = useState(350);
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
             <Button onClick={() => setIsOpen(true)}>Open Settings Panel</Button>
             <SettingsPanel
                 open={isOpen}
