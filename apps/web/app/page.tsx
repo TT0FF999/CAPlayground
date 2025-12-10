@@ -91,22 +91,18 @@ export default async function HomePage() {
   }
   
   return (
-    <div className="min-h-screen flex flex-col dark:bg-[#0f172a] dark:text-white">
+    <div className="min-h-screen flex flex-col dark:text-white"> 
       <div className="relative">
         
         {}
-        <div className="blob-cont">
+        <div className="blob-cont"> 
           <div className="blob blob-1"></div>
           <div className="blob blob-2"></div>
           <div className="blob blob-3"></div>
         </div>
 
         {}
-        {}
         <Navigation className="z-20 sticky top-0 glass-panel backdrop-blur-xl border border-white/20 dark:border-white/20 shadow-lg shadow-black/30 border-b-0" /> 
-        
-        
-        {}
         
         <main className="relative z-10">
           <section className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex items-start">
@@ -116,7 +112,7 @@ export default async function HomePage() {
                 <div className="space-y-8 text-center lg:text-left">
                   
                   <Link href="/projects">
-                    {}
+                    
                     <div className="inline-flex items-center justify-center lg:justify-start px-6 py-2.5 rounded-full glass-panel transition-all duration-200 hover:bg-white/15 hover:border-white/50 hover:shadow-xl cursor-pointer w-auto shadow-white/5">
                       <NotificationIcon className="h-4 w-4 text-accent mr-2" aria-hidden="true" />
                       <span className="text-accent font-sans font-medium text-sm">Les modes de fusion et les filtres sont sortis !</span>
@@ -124,7 +120,7 @@ export default async function HomePage() {
                   </Link>
                   
                   <h1 className="font-heading text-4xl min-[600px]:text-6xl lg:text-6xl font-bold text-foreground dark:text-white leading-tight mt-6 min-[600px]:mt-8">
-                    {}
+                    
                     <span className="block">L'Éditeur Open Source</span>
                     <span className="block hero-gradient mt-1 drop-shadow-lg">de Fonds d'écran CA.</span>
                   </h1>
@@ -171,7 +167,6 @@ export default async function HomePage() {
                 <div className="pt-10 lg:pt-0 hidden lg:block">
                   <Link href="/wallpapers?id=0000001" className="block">
                     
-                    {}
                     <div className="relative w-full max-w-5xl min-[600px]:max-w-none rounded-2xl glass-card overflow-hidden cursor-pointer transition-transform hover:scale-[1.02] duration-500">
                       <video
                         src="/featured.mp4"
@@ -193,7 +188,7 @@ export default async function HomePage() {
  
               <div className="pt-6 min-[600px]:pt-8">
                 
-                {}
+                
                 <div className="max-w-7xl mx-auto rounded-3xl glass-card overflow-hidden">
                   <Image
                     src="/app-light.png"
@@ -228,7 +223,7 @@ export default async function HomePage() {
                   <Link href="https://github.com/CAPlayground/CAPlayground" target="_blank" rel="noopener noreferrer" className="w-full">
                     <Button 
                       size="lg" 
-                      variant="outline"    
+                      variant="outline" 
                       className="w-full h-12 text-base px-6 liquid-button bg-white/5 dark:bg-white/10 backdrop-blur-xl border border-white/20 dark:border-white/20 shadow-lg shadow-black/30 hover:bg-white/15 dark:hover:bg-white/15 text-foreground dark:text-white"
                     >
                       <span className="inline-flex items-center justify-center gap-2">
@@ -251,7 +246,7 @@ export default async function HomePage() {
             <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               <div>
                 
-                {}
+                
                 <Card className="overflow-hidden rounded-2xl glass-card bg-white/5 dark:bg-white/10 backdrop-blur-xl border border-white/20 dark:border-white/20 shadow-lg shadow-black/30 transition-all duration-300">
                   <CardContent className="p-4">
                     <div className="mb-3 overflow-hidden rounded-md border border-white/20 dark:border-white/30 bg-background">
@@ -298,7 +293,7 @@ export default async function HomePage() {
                 </Card>
               </div>
               <div className="space-y-4 text-center lg:text-left dark:text-white">
-                {}
+                
                 <h2 className="font-heading text-3xl md:text-4xl font-bold glass-text">
                   Explorez le fond d'écran le plus téléchargé
                 </h2>
@@ -331,7 +326,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {}
+      
       <Footer className="relative z-10 border-t border-white/10 glass-panel mt-auto" />
     </div>
   )
