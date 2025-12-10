@@ -196,9 +196,10 @@ export function SettingsPanel({
       <div
         className={cn(
           "fixed top-0 right-0 h-full z-[1001] shadow-2xl",
-          // MODIFICATION: Augmentation de la transparence de l'arrière-plan (Light: /90 -> /60 | Dark: /80 -> /50)
-          "bg-white/60 backdrop-blur-3xl border-l border-white/50", 
-          "dark:bg-gray-900/50 dark:border-gray-800/50",
+          // CHANGEMENT POUR ADOPTER LE THÈME GLASMORPHISM (basé sur page.tsx)
+          // Très faible opacité + flou intense + bordures claires
+          "bg-white/5 backdrop-blur-3xl border-l border-white/20", 
+          "dark:bg-gray-900/10 dark:border-white/20",
           "rounded-l-3xl", 
           "w-full md:w-[500px] lg:w-[600px]",
           "transform transition-transform duration-300 ease-out",
@@ -295,8 +296,8 @@ export function SettingsPanel({
           {}
           <div className="space-y-4 pt-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Keyboard Shortcuts</h3>
-            {/* MODIFICATION: Augmentation de la transparence de l'arrière-plan du bloc de raccourcis */}
-            <div className="space-y-2 text-sm bg-gray-100/30 dark:bg-gray-800/30 p-3 rounded-lg border border-gray-200/50 dark:border-gray-700/50">
+            {/* CHANGEMENT POUR ADOPTER LE THÈME GLASMORPHISM */}
+            <div className="space-y-2 text-sm bg-white/5 dark:bg-gray-900/10 p-3 rounded-lg border border-white/20 dark:border-white/20">
               <div className="flex items-center justify-between"><span>Undo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Z</span></div>
               <div className="flex items-center justify-between"><span>Redo</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + Shift + Z</span></div>
               <div className="flex items-center justify-between"><span>Zoom In</span><span className="font-mono text-gray-600 dark:text-gray-400 text-xs">{typeof navigator !== 'undefined' && navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'} + +</span></div>
