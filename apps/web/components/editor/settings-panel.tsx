@@ -11,7 +11,9 @@ const Button = ({ children, className, variant = 'default', size = 'default', on
   let baseClasses = "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   
   if (variant === 'ghost') baseClasses += " bg-transparent hover:bg-muted/50 text-foreground";
-  if (variant === 'outline') baseClasses += " border border-border bg-card text-card-foreground hover:bg-muted/50";
+  
+  if (variant === 'outline') baseClasses += " liquid-button border border-border/50 text-card-foreground hover:bg-white/15 dark:hover:bg-white/10";
+
   if (variant === 'default') baseClasses += " bg-accent text-accent-foreground hover:bg-accent/90";
 
   if (size === 'icon') baseClasses += " h-10 w-10 p-0";
@@ -38,7 +40,7 @@ const Switch = ({ checked, onCheckedChange, id, ...props }) => (
     onClick={() => onCheckedChange(!checked)}
     className={cn(
       "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-      checked ? "bg-accent" : "bg-input dark:bg-secondary/50"
+      checked ? "bg-accent" : "bg-input dark:bg-secondary/50 border-2 border-border/50"
     )}
     {...props}
   >
@@ -252,7 +254,7 @@ export function SettingsPanel({
                   <Label htmlFor="snap-threshold" className="text-base">Sensitivity (px)</Label>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium w-6 text-right text-muted-foreground">{SNAP_THRESHOLD}</span>
-                    <Button variant="outline" size="sm" onClick={()=>{setSnapThreshold(12)}}>Reset</Button>
+                    <Button variant="outline" size="sm" className="liquid-button" onClick={()=>{setSnapThreshold(12)}}>Reset</Button>
                   </div>
                 </div>
                 <Slider id="snap-threshold" value={[SNAP_THRESHOLD]} min={3} max={25} onValueChange={([c]) => setSnapThreshold(c)} />
@@ -261,7 +263,7 @@ export function SettingsPanel({
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Layer Controls</h3>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Layer Controls </h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="show-geometry-resize" className="text-base">Show geometry resize buttons</Label>
@@ -286,7 +288,7 @@ export function SettingsPanel({
                   <Label htmlFor="pinch-zoom-sensitivity" className="text-base">Pinch to zoom sensitivity</Label>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium w-6 text-right text-muted-foreground">{pinchZoomSensitivity.toFixed(1)}</span>
-                    <Button variant="outline" size="sm" onClick={()=>{setPinchZoomSensitivity(1)}}>Reset</Button>
+                    <Button variant="outline" size="sm" className="liquid-button" onClick={()=>{setPinchZoomSensitivity(1)}}>Reset</Button>
                   </div>
                 </div>
                 <Slider id="pinch-zoom-sensitivity" value={[pinchZoomSensitivity]} min={0.5} max={2} step={0.1} onValueChange={([c]) => setPinchZoomSensitivity(c)} />
@@ -337,7 +339,7 @@ export function SettingsPanel({
                 <Button
                   variant="outline"
                   size="default"
-                  className="w-full"
+                  className="w-full liquid-button"
                   onClick={() => {
                     setLeftWidth?.(320);
                     setRightWidth?.(400);
@@ -348,12 +350,13 @@ export function SettingsPanel({
                 </Button>
               </div>
             </div>
+           
           </div>
 
           <div className="space-y-4 pt-4">
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full liquid-button"
               onClick={() => {
                 if (typeof window !== 'undefined') {
                   window.dispatchEvent(new Event('caplay:start-onboarding'));
@@ -385,7 +388,7 @@ export default function App() {
     const [statesHeight, setStatesHeight] = useState(350);
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center p-4">
             <Button onClick={() => setIsOpen(true)}>Open Settings Panel</Button>
             <SettingsPanel
                 open={isOpen}
