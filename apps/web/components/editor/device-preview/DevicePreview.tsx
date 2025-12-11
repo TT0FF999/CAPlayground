@@ -1,9 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
-type AnyLayer = any;
-const interpolateLayers = (a: any, b: any, p: number) => a;
-const applyOverrides = (base: any, overrides: any, state: string) => base;
-
 const useEditor = () => ({
   doc: {
     meta: { width: 390, height: 844 },
@@ -14,17 +10,22 @@ const useEditor = () => ({
   },
 });
 
+const interpolateLayers = (fromLayers: any[], toLayers: any[], progress: number) => fromLayers;
+const applyOverrides = (base: any[], overrides: any, state: string) => base;
+
+type AnyLayer = any; 
+
 const PHONE_STATES = {
-  LOCKED: "Locked",
-  UNLOCK: "Unlock",
-  SLEEP: "Sleep",
+  LOCKED: "Locked", 
+  UNLOCK: "Unlock", 
+  SLEEP: "Sleep",   
 };
 
 export function TopBar({ showTopBar }: { showTopBar: boolean }) {
   if (!showTopBar) return null;
   return (
     <div className="absolute top-4 left-0 right-0 h-8 px-5 flex items-center justify-between text-xs font-semibold text-white pointer-events-none z-40">
-      <span className="font-bold">9:41</span>
+      <span className="font-bold">9:41</span> 
       <div className="flex items-center space-x-1">
         <svg className="w-4 h-4 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="12" y1="20" x2="12" y2="10" />
@@ -97,7 +98,6 @@ export function LockScreen({
   );
 }
 
-
 type Props = {
   children: React.ReactNode;
   showPreview: boolean;
@@ -116,7 +116,6 @@ export default function DevicePreview({
     floating,
     background,
   } = doc?.docs || {}
-  
   const canvasWidth = doc?.meta.width ?? 390;
   const canvasHeight = doc?.meta.height ?? 844;
 
@@ -127,7 +126,6 @@ export default function DevicePreview({
   const [isAnimatingFromSleep, setIsAnimatingFromSleep] = useState(false);
   const [isAnimatingDragCancel, setIsAnimatingDragCancel] = useState(false);
   const [isAnimatingDragComplete, setIsAnimatingDragComplete] = useState(false);
-  
   const toSleepAnimationRef = useRef<number | null>(null);
   const fromSleepAnimationRef = useRef<number | null>(null);
   const dragCancelAnimationRef = useRef<number | null>(null);
@@ -140,35 +138,38 @@ export default function DevicePreview({
   const dragCompleteStartRef = useRef<number | null>(null);
   const dragCompleteFromProgressRef = useRef<number>(0);
   const dragCompleteTargetStateRef = useRef<string>(PHONE_STATES.UNLOCK);
+
   const dragStartYRef = useRef<number | null>(null);
   const dragDirectionRef = useRef<"up" | "down" | null>(null);
   const phoneScreenRef = useRef<HTMLDivElement | null>(null);
   const dragStartElementRef = useRef<"home-bar" | "status-bar" | null>(null);
 
 
-  const updateLayersWithProgress = useCallback((targetState: string, progress: number) => {
-    if (!showPreview) return;
-
+  const getLayersForState = useCallback((state: string) => {
     const floatingOverrides = floating?.stateOverrides || {};
     const backgroundOverrides = background?.stateOverrides || {};
-
     const baseFloatingLayers = floating?.layers || [];
     const baseBackgroundLayers = background?.layers || [];
 
-    const currentFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, phoneState);
-    const currentBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, phoneState);
+    const floatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, state);
+    const backgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, state);
+    return { floatingLayers, backgroundLayers };
+  }, [floating, background]);
 
-    const targetFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, targetState);
-    const targetBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, targetState);
+  const updateLayersWithProgress = useCallback((fromState: string, targetState: string, progress: number) => {
+    if (!showPreview) return;
 
-    const interpolatedFloating = interpolateLayers(currentFloatingLayers, targetFloatingLayers, progress);
-    const interpolatedBackground = interpolateLayers(currentBackgroundLayers, targetBackgroundLayers, progress);
+    const { floatingLayers: fromFloatingLayers, backgroundLayers: fromBackgroundLayers } = getLayersForState(fromState);
+    const { floatingLayers: targetFloatingLayers, backgroundLayers: targetBackgroundLayers } = getLayersForState(targetState);
+
+    const interpolatedFloating = interpolateLayers(fromFloatingLayers, targetFloatingLayers, progress);
+    const interpolatedBackground = interpolateLayers(fromBackgroundLayers, targetBackgroundLayers, progress);
 
     setPreviewLayers([
       ...interpolatedBackground,
       ...interpolatedFloating,
     ]);
-  }, [showPreview, floating, background, phoneState, setPreviewLayers]);
+  }, [showPreview, getLayersForState, setPreviewLayers]);
 
   useEffect(() => {
     if (!showPreview) {
@@ -176,28 +177,42 @@ export default function DevicePreview({
     } else {
       setPhoneState(PHONE_STATES.LOCKED);
       setDragOffset(0);
-      const floatingOverrides = floating?.stateOverrides || {};
-      const backgroundOverrides = background?.stateOverrides || {};
-
-      const baseFloatingLayers = floating?.layers || [];
-      const baseBackgroundLayers = background?.layers || [];
-
-      const lockedFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, PHONE_STATES.LOCKED);
-      const lockedBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, PHONE_STATES.LOCKED);
-
+      const { floatingLayers, backgroundLayers } = getLayersForState(PHONE_STATES.LOCKED);
       setPreviewLayers([
-        ...lockedBackgroundLayers,
-        ...lockedFloatingLayers,
+        ...backgroundLayers,
+        ...floatingLayers,
       ]);
     }
-  }, [showPreview, floating, background]);
+  }, [showPreview, getLayersForState, setPreviewLayers]);
 
   useEffect(() => {
+    let animationRef: React.MutableRefObject<number | null> | null = null;
+    let setIsAnimating: ((value: React.SetStateAction<boolean>) => void) | null = null;
+    let fromState = PHONE_STATES.LOCKED; 
+    let targetState = phoneState;
+    let shouldAnimate = false;
+
     if (phoneState === PHONE_STATES.SLEEP && !isAnimatingToSleep && !wasSleepingRef.current) {
-      const fromState = previousStateRef.current;
-      setIsAnimatingToSleep(true);
-      sleepAnimationStartRef.current = performance.now();
+      fromState = previousStateRef.current;
+      targetState = PHONE_STATES.SLEEP;
+      setIsAnimating = setIsAnimatingToSleep;
+      animationRef = toSleepAnimationRef;
+      shouldAnimate = true;
       wasSleepingRef.current = true;
+    } else if (phoneState !== PHONE_STATES.SLEEP && wasSleepingRef.current && !isAnimatingFromSleep) {
+      fromState = PHONE_STATES.SLEEP;
+      targetState = phoneState;
+      setIsAnimating = setIsAnimatingFromSleep;
+      animationRef = fromSleepAnimationRef;
+      shouldAnimate = true;
+    }
+
+    if (shouldAnimate && setIsAnimating && animationRef) {
+      setIsAnimating(true);
+      sleepAnimationStartRef.current = performance.now();
+
+      const startFromState = fromState;
+      const endToState = targetState;
 
       const animate = (currentTime: number) => {
         if (!sleepAnimationStartRef.current) return;
@@ -205,42 +220,32 @@ export default function DevicePreview({
         const elapsed = currentTime - sleepAnimationStartRef.current;
         const duration = 500;
         const progress = Math.min(elapsed / duration, 1);
-
-        const floatingOverrides = floating?.stateOverrides || {};
-        const backgroundOverrides = background?.stateOverrides || {};
-
-        const baseFloatingLayers = floating?.layers || [];
-        const baseBackgroundLayers = background?.layers || [];
-
-        const fromFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, fromState);
-        const fromBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, fromState);
-
-        const targetFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, PHONE_STATES.SLEEP);
-        const targetBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, PHONE_STATES.SLEEP);
-
-        const interpolatedFloating = interpolateLayers(fromFloatingLayers, targetFloatingLayers, progress);
-        const interpolatedBackground = interpolateLayers(fromBackgroundLayers, targetBackgroundLayers, progress);
-
-        setPreviewLayers([
-          ...interpolatedBackground,
-          ...interpolatedFloating,
-        ]);
+        
+        updateLayersWithProgress(startFromState, endToState, progress);
 
         if (progress < 1) {
-          toSleepAnimationRef.current = requestAnimationFrame(animate);
+          animationRef.current = requestAnimationFrame(animate);
         } else {
-          setIsAnimatingToSleep(false);
+          setIsAnimating(false);
           sleepAnimationStartRef.current = null;
+          if (endToState !== PHONE_STATES.SLEEP) {
+            wasSleepingRef.current = false;
+          }
+          const { floatingLayers, backgroundLayers } = getLayersForState(endToState);
+          setPreviewLayers([
+            ...backgroundLayers,
+            ...floatingLayers,
+          ]);
         }
       };
 
-      toSleepAnimationRef.current = requestAnimationFrame(animate);
+      animationRef.current = requestAnimationFrame(animate);
 
       return () => {
-        if (toSleepAnimationRef.current) {
-          cancelAnimationFrame(toSleepAnimationRef.current);
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
         }
-        setIsAnimatingToSleep(false);
+        setIsAnimating(false);
         sleepAnimationStartRef.current = null;
       };
     }
@@ -248,67 +253,15 @@ export default function DevicePreview({
     if (phoneState !== PHONE_STATES.SLEEP) {
       previousStateRef.current = phoneState;
     }
-  }, [phoneState, floating, background]);
-
-  useEffect(() => {
-    if (phoneState !== PHONE_STATES.SLEEP && wasSleepingRef.current && !isAnimatingFromSleep) {
-      const targetState = phoneState;
-      setIsAnimatingFromSleep(true);
-      sleepAnimationStartRef.current = performance.now();
-
-      const animate = (currentTime: number) => {
-        if (!sleepAnimationStartRef.current) return;
-
-        const elapsed = currentTime - sleepAnimationStartRef.current;
-        const duration = 500;
-        const progress = Math.min(elapsed / duration, 1);
-
-        const floatingOverrides = floating?.stateOverrides || {};
-        const backgroundOverrides = background?.stateOverrides || {};
-
-        const baseFloatingLayers = floating?.layers || [];
-        const baseBackgroundLayers = background?.layers || [];
-
-        const fromFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, PHONE_STATES.SLEEP);
-        const fromBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, PHONE_STATES.SLEEP);
-
-        const targetFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, targetState);
-        const targetBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, targetState);
-
-        const interpolatedFloating = interpolateLayers(fromFloatingLayers, targetFloatingLayers, progress);
-        const interpolatedBackground = interpolateLayers(fromBackgroundLayers, targetBackgroundLayers, progress);
-
-        setPreviewLayers([
-          ...interpolatedBackground,
-          ...interpolatedFloating,
-        ]);
-
-        if (progress < 1) {
-          fromSleepAnimationRef.current = requestAnimationFrame(animate);
-        } else {
-          setIsAnimatingFromSleep(false);
-          sleepAnimationStartRef.current = null;
-          wasSleepingRef.current = false;
-        }
-      };
-
-      fromSleepAnimationRef.current = requestAnimationFrame(animate);
-
-      return () => {
-        if (fromSleepAnimationRef.current) {
-          cancelAnimationFrame(fromSleepAnimationRef.current);
-        }
-        setIsAnimatingFromSleep(false);
-        sleepAnimationStartRef.current = null;
-        wasSleepingRef.current = false;
-      };
-    }
-  }, [phoneState, floating, background]);
-
+  }, [phoneState, isAnimatingToSleep, isAnimatingFromSleep, updateLayersWithProgress, getLayersForState, setPreviewLayers]);
+  
   useEffect(() => {
     if (isAnimatingDragCancel) {
       const startProgress = dragCancelFromProgressRef.current;
       dragCancelStartRef.current = performance.now();
+      
+      const fromState = phoneState === PHONE_STATES.LOCKED ? PHONE_STATES.UNLOCK : PHONE_STATES.LOCKED;
+      const targetState = phoneState; 
 
       const animate = (currentTime: number) => {
         if (!dragCancelStartRef.current) return;
@@ -318,41 +271,17 @@ export default function DevicePreview({
         const progress = Math.min(elapsed / duration, 1);
 
         const easeProgress = 1 - Math.pow(1 - progress, 3);
-
         const currentInterpolation = startProgress * (1 - easeProgress);
 
-        const targetState = phoneState;
-
-        const tempCurrentState = phoneState === PHONE_STATES.LOCKED ? PHONE_STATES.UNLOCK : PHONE_STATES.LOCKED;
-        
-        const floatingOverrides = floating?.stateOverrides || {};
-        const backgroundOverrides = background?.stateOverrides || {};
-        const baseFloatingLayers = floating?.layers || [];
-        const baseBackgroundLayers = background?.layers || [];
-
-        const fromFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, tempCurrentState);
-        const fromBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, tempCurrentState);
-
-        const targetFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, phoneState);
-        const targetBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, phoneState);
-
-        const interpolatedFloating = interpolateLayers(targetFloatingLayers, fromFloatingLayers, currentInterpolation);
-        const interpolatedBackground = interpolateLayers(targetBackgroundLayers, fromBackgroundLayers, currentInterpolation);
-
-
-        setPreviewLayers([
-            ...interpolatedBackground,
-            ...interpolatedFloating,
-          ]);
+        updateLayersWithProgress(fromState, targetState, currentInterpolation); 
 
         if (progress < 1) {
           dragCancelAnimationRef.current = requestAnimationFrame(animate);
         } else {
-          const finalFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, phoneState);
-          const finalBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, phoneState);
+          const { floatingLayers, backgroundLayers } = getLayersForState(phoneState);
           setPreviewLayers([
-            ...finalBackgroundLayers,
-            ...finalFloatingLayers,
+            ...backgroundLayers,
+            ...floatingLayers,
           ]);
 
           setIsAnimatingDragCancel(false);
@@ -369,15 +298,15 @@ export default function DevicePreview({
         }
       };
     }
-  }, [isAnimatingDragCancel, phoneState, floating, background, updateLayersWithProgress]);
+  }, [isAnimatingDragCancel, phoneState, getLayersForState, setPreviewLayers, updateLayersWithProgress]);
 
   useEffect(() => {
     if (isAnimatingDragComplete) {
       const startProgress = dragCompleteFromProgressRef.current;
       const targetState = dragCompleteTargetStateRef.current;
-      const fromState = targetState === PHONE_STATES.LOCKED ? PHONE_STATES.UNLOCK : PHONE_STATES.LOCKED;
-
       dragCompleteStartRef.current = performance.now();
+      
+      const fromState = targetState === PHONE_STATES.LOCKED ? PHONE_STATES.UNLOCK : PHONE_STATES.LOCKED;
 
       const animate = (currentTime: number) => {
         if (!dragCompleteStartRef.current) return;
@@ -390,30 +319,18 @@ export default function DevicePreview({
 
         const currentInterpolation = startProgress + (1 - startProgress) * easeProgress;
         
-        const floatingOverrides = floating?.stateOverrides || {};
-        const backgroundOverrides = background?.stateOverrides || {};
-        const baseFloatingLayers = floating?.layers || [];
-        const baseBackgroundLayers = background?.layers || [];
-
-        const fromFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, fromState);
-        const fromBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, fromState);
-
-        const targetFloatingLayers = applyOverrides(baseFloatingLayers, floatingOverrides, targetState);
-        const targetBackgroundLayers = applyOverrides(baseBackgroundLayers, backgroundOverrides, targetState);
-
-        const interpolatedFloating = interpolateLayers(fromFloatingLayers, targetFloatingLayers, currentInterpolation);
-        const interpolatedBackground = interpolateLayers(fromBackgroundLayers, targetBackgroundLayers, currentInterpolation);
-
-
-        setPreviewLayers([
-            ...interpolatedBackground,
-            ...interpolatedFloating,
-          ]);
+        updateLayersWithProgress(fromState, targetState, currentInterpolation);
 
         if (progress < 1) {
           dragCompleteAnimationRef.current = requestAnimationFrame(animate);
         } else {
           setPhoneState(targetState);
+          const { floatingLayers, backgroundLayers } = getLayersForState(targetState);
+          setPreviewLayers([
+            ...backgroundLayers,
+            ...floatingLayers,
+          ]);
+
           setIsAnimatingDragComplete(false);
           dragCompleteStartRef.current = null;
           dragCompleteFromProgressRef.current = 0;
@@ -428,9 +345,10 @@ export default function DevicePreview({
         }
       };
     }
-  }, [isAnimatingDragComplete, floating, background]);
-  
+  }, [isAnimatingDragComplete, getLayersForState, setPreviewLayers, updateLayersWithProgress]);
+
   const handleSideButtonClick = () => {
+    if (isAnimatingDragCancel || isAnimatingDragComplete) return;
     if (phoneState === PHONE_STATES.SLEEP) {
       setPhoneState(PHONE_STATES.LOCKED);
       setDragOffset(0);
@@ -447,6 +365,7 @@ export default function DevicePreview({
   };
 
   const onDragStart = (clientY: number, element: "home-bar" | "status-bar") => {
+    if (isAnimatingDragCancel || isAnimatingDragComplete || isAnimatingToSleep || isAnimatingFromSleep) return;
     if (phoneState === PHONE_STATES.LOCKED && element !== "home-bar") return;
     if (phoneState === PHONE_STATES.UNLOCK && element !== "status-bar") return;
 
@@ -454,11 +373,6 @@ export default function DevicePreview({
     dragStartYRef.current = clientY;
     dragStartElementRef.current = element;
     dragDirectionRef.current = null;
-    
-    if (dragCancelAnimationRef.current) cancelAnimationFrame(dragCancelAnimationRef.current);
-    if (dragCompleteAnimationRef.current) cancelAnimationFrame(dragCompleteAnimationRef.current);
-    setIsAnimatingDragCancel(false);
-    setIsAnimatingDragComplete(false);
   };
 
   const onDragMove = (clientY: number) => {
@@ -467,67 +381,126 @@ export default function DevicePreview({
     const screenHeight = phoneScreenRef.current.clientHeight;
     const delta = clientY - dragStartYRef.current;
 
-    if (!dragDirectionRef.current && Math.abs(delta) > 5) {
-      dragDirectionRef.current = delta < 0 ? "up" : "down";
+    if (!dragDirectionRef.current) {
+      if (Math.abs(delta) > 5) {
+        dragDirectionRef.current = delta < 0 ? "up" : "down"; 
+      }
     }
 
-    if (dragDirectionRef.current === "up" && phoneState === PHONE_STATES.LOCKED) {
-      const progress = Math.min(Math.abs(delta) / screenHeight, 1);
+    let progress = 0;
+    let fromState = PHONE_STATES.LOCKED;
+    let targetState = PHONE_STATES.LOCKED;
+    
+    if (phoneState === PHONE_STATES.LOCKED && delta < 0) {
+      progress = Math.min(Math.abs(delta) / screenHeight, 1);
+      fromState = PHONE_STATES.LOCKED;
+      targetState = PHONE_STATES.UNLOCK;
       setDragOffset(Math.max(delta, -screenHeight));
-      updateLayersWithProgress(PHONE_STATES.UNLOCK, progress);
-    } else if (dragDirectionRef.current === "down" && phoneState === PHONE_STATES.UNLOCK) {
-      const progress = Math.min(Math.abs(delta) / screenHeight, 1);
-      const currentProgress = 1 - progress;
+    } else if (phoneState === PHONE_STATES.UNLOCK && delta > 0) {
+      progress = 1 - Math.min((screenHeight - delta) / screenHeight, 1);
+      fromState = PHONE_STATES.UNLOCK;
+      targetState = PHONE_STATES.LOCKED;
       setDragOffset(-screenHeight + Math.min(delta, screenHeight));
-      updateLayersWithProgress(PHONE_STATES.LOCKED, currentProgress);
+    } else {
+      return;
     }
+    
+    updateLayersWithProgress(fromState, targetState, progress);
   };
 
   const onDragEnd = () => {
     if (!isDragging || !phoneScreenRef.current) return;
 
     const screenHeight = phoneScreenRef.current.clientHeight;
-    let currentProgress = 0;
-    let targetState = phoneState;
-    let dragDistance = dragOffset;
 
-    if (phoneState === PHONE_STATES.LOCKED && dragDirectionRef.current === "up") {
-      currentProgress = Math.min(Math.abs(dragDistance) / screenHeight, 1);
-      targetState = PHONE_STATES.UNLOCK;
-    } else if (phoneState === PHONE_STATES.UNLOCK && dragDirectionRef.current === "down") {
-      currentProgress = 1 - Math.min((screenHeight + dragDistance) / screenHeight, 1);
-      targetState = PHONE_STATES.LOCKED;
+    let currentProgress = 0;
+    let baseState = phoneState;
+    
+    if (phoneState === PHONE_STATES.LOCKED) {
+      currentProgress = Math.min(Math.abs(dragOffset) / screenHeight, 1);
+    } else if (phoneState === PHONE_STATES.UNLOCK) {
+      currentProgress = Math.min((screenHeight + dragOffset) / screenHeight, 1);
     }
 
     const thresholdMet = currentProgress >= 0.5;
 
-    if (thresholdMet) {
+    let shouldComplete = false;
+    let nextTargetState = baseState;
+
+    if (baseState === PHONE_STATES.LOCKED && dragDirectionRef.current === "up" && thresholdMet) {
+      shouldComplete = true;
+      nextTargetState = PHONE_STATES.UNLOCK;
+    } else if (baseState === PHONE_STATES.UNLOCK && dragDirectionRef.current === "down" && !thresholdMet) {
+        shouldComplete = true;
+        nextTargetState = PHONE_STATES.LOCKED;
+    } else if (baseState === PHONE_STATES.UNLOCK && dragDirectionRef.current === "up" && thresholdMet) {
+        shouldComplete = true; 
+        nextTargetState = PHONE_STATES.UNLOCK;
+    }
+
+    if (shouldComplete && nextTargetState !== baseState) { 
       dragCompleteFromProgressRef.current = currentProgress;
-      dragCompleteTargetStateRef.current = targetState;
+      dragCompleteTargetStateRef.current = nextTargetState;
       setIsAnimatingDragComplete(true);
-      setDragOffset(targetState === PHONE_STATES.UNLOCK ? -screenHeight : 0);
+      setDragOffset(nextTargetState === PHONE_STATES.UNLOCK ? -screenHeight : 0);
     } else if (currentProgress > 0) {
       dragCancelFromProgressRef.current = currentProgress;
       setIsAnimatingDragCancel(true);
       setDragOffset(phoneState === PHONE_STATES.UNLOCK ? -screenHeight : 0);
     }
 
+
     setIsDragging(false);
     dragStartYRef.current = null;
     dragDirectionRef.current = null;
   };
 
-  const handleHomeBarMouseDown = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); onDragStart(e.clientY, "home-bar"); };
-  const handleHomeBarTouchStart = (e: React.TouchEvent) => { e.stopPropagation(); const touch = e.touches[0]; if (touch) onDragStart(touch.clientY, "home-bar"); };
-  const handleStatusBarMouseDown = (e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); onDragStart(e.clientY, "status-bar"); };
-  const handleStatusBarTouchStart = (e: React.TouchEvent) => { e.stopPropagation(); const touch = e.touches[0]; if (touch) onDragStart(touch.clientY, "status-bar"); };
-  const handleMouseMove = (e: React.MouseEvent) => { onDragMove(e.clientY); };
-  const handleMouseUp = () => { onDragEnd(); };
-  const handleTouchMove = (e: React.TouchEvent) => { const touch = e.touches[0]; if (touch) onDragMove(touch.clientY); };
-  const handleTouchEnd = () => { onDragEnd(); };
+  const handleHomeBarMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDragStart(e.clientY, "home-bar");
+  };
 
+  const handleHomeBarTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    const touch = e.touches[0];
+    if (!touch) return;
+    onDragStart(touch.clientY, "home-bar");
+  };
+
+  const handleStatusBarMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDragStart(e.clientY, "status-bar");
+  };
+
+  const handleStatusBarTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    const touch = e.touches[0];
+    if (!touch) return;
+    onDragStart(touch.clientY, "status-bar");
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    onDragMove(e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    onDragEnd();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    onDragMove(touch.clientY);
+  };
+
+  const handleTouchEnd = () => {
+    onDragEnd();
+  };
 
   let homeBarTranslateY = 0;
+
   if (phoneState === PHONE_STATES.LOCKED) {
     homeBarTranslateY = dragOffset;
   } else if (phoneState === PHONE_STATES.UNLOCK) {
@@ -535,6 +508,7 @@ export default function DevicePreview({
   }
 
   const isSleep = phoneState === PHONE_STATES.SLEEP;
+  const isLocked = phoneState === PHONE_STATES.LOCKED;
   const isUnlocked = phoneState === PHONE_STATES.UNLOCK;
 
 
@@ -542,7 +516,7 @@ export default function DevicePreview({
   return (
     <div
       className={'flex flex-col items-center justify-center w-full h-full select-none'}
-      style={{ background: 'radial-gradient(circle at top, #141415 0%, #000 60%)' }}
+      style={{ background: 'radial-gradient(circle at top, #222 0%, #000 60%)' }}
       onMouseMove={isDragging ? handleMouseMove : undefined}
       onMouseUp={isDragging ? handleMouseUp : undefined}
       onMouseLeave={isDragging ? handleMouseUp : undefined}
@@ -550,37 +524,28 @@ export default function DevicePreview({
       onTouchEnd={isDragging ? handleTouchEnd : undefined}
     >
       <div
-        className="relative rounded-[56px] p-[6px] flex shrink-0 items-stretch justify-center shadow-[0_0_0_2px_#333,0_0_0_6px_#111,0_25px_50px_rgba(0,0,0,0.8)]"
+        className="relative rounded-[48px] p-2 flex shrink-0 items-stretch justify-center shadow-[0_0_0_3px_#000,0_20px_40px_rgba(0,0,0,0.7)]"
         style={{
-          background: 'linear-gradient(145deg, #2c2c2e, #141415)',
-          width: `${canvasWidth + 12}px`,
-          height: `${canvasHeight + 12}px`,
+          background: 'linear-gradient(145deg, #444, #111)',
+          width: `${canvasWidth}px`,
+          height: `${canvasHeight}px`,
           boxSizing: 'content-box',
           transform: `scale(${scale})`,
         }}
       >
         <button
-          className="absolute -right-3 top-[90px] w-3 h-[60px] rounded-[3px] bg-[#555] border border-[#333] cursor-pointer active:translate-x-px shadow-inner"
+          className="absolute -right-3.5 top-[90px] w-3 h-[60px] rounded-[3px] bg-[#555] border-none cursor-pointer active:translate-x-px"
           onClick={handleSideButtonClick}
           disabled={isAnimatingDragCancel || isAnimatingDragComplete || isAnimatingToSleep || isAnimatingFromSleep}
         />
-        <div className="absolute -left-3 top-[100px] w-3 h-[25px] rounded-[3px] bg-[#555] border border-[#333] shadow-inner" />
-        <div className="absolute -left-3 top-[135px] w-3 h-[25px] rounded-[3px] bg-[#555] border border-[#333] shadow-inner" />
 
         <div
           ref={phoneScreenRef}
-          className={`relative flex-1 rounded-[36px] overflow-hidden bg-black flex flex-col select-none ${
+          className={`relative flex-1 rounded-[40px] overflow-hidden bg-black flex flex-col select-none ${
             isSleep ? 'brightness-[0.7]' : 'shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]'
           }`}
           onClick={handleScreenClick}
         >
-          {!isSleep && (
-            <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-50 flex items-center justify-center p-1 shadow-xl pointer-events-none">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#1e1e1e] mr-1" />
-              <div className="w-5 h-5 bg-[#1e1e1e] rounded-full" />
-            </div>
-          )}
-
           <div className="absolute inset-0 overflow-hidden">
             {children}
           </div>
@@ -595,16 +560,16 @@ export default function DevicePreview({
             showButtons={!isSleep}
           />
 
-          <TopBar showTopBar={!isSleep} />
-
           {isUnlocked && (
-            <div className="absolute inset-0 flex flex-col text-white pointer-events-none">
+            <div className="absolute inset-0 flex flex-col text-white">
               <div
                 className="w-full h-16 pt-5 cursor-grab select-none touch-none active:cursor-grabbing pointer-events-auto"
                 onMouseDown={handleStatusBarMouseDown}
                 onTouchStart={handleStatusBarTouchStart}
               >
+                <TopBar showTopBar />
               </div>
+              
               <div className="flex-1 flex items-end justify-center pb-5 pointer-events-none">
                 <div className="grid grid-cols-4 gap-5 p-5 rounded-[28px] bg-white/10 backdrop-blur-md shadow-xl pointer-events-auto">
                   {Array.from({ length: 4 }).map((_, i) => (
@@ -614,6 +579,8 @@ export default function DevicePreview({
               </div>
             </div>
           )}
+          
+          {isLocked && !isSleep && <TopBar showTopBar={true} />}
 
         </div>
       </div>
