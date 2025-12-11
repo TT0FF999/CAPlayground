@@ -66,7 +66,13 @@ const Slider = ({ value, min, max, step, onValueChange, id }) => (
     step={step}
     value={value[0]}
     onChange={(e) => onValueChange([Number(e.target.value)])}
-    className="w-full h-2 bg-white/20 dark:bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:bg-accent [&::-moz-range-thumb]:bg-accent"
+    className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-white/20 dark:bg-white/10
+      [&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-white/20 dark:[&::-webkit-slider-runnable-track]:bg-white/10
+      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:mt-[-6px] 
+      [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/30 dark:[&::-webkit-slider-thumb]:border-white/20
+      [&::-moz-range-track]:h-2 [&::-moz-range-track]:rounded-lg [&::-moz-range-track]:bg-white/20 dark:[&::-moz-range-track]:bg-white/10
+      [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-lg
+      "
   />
 );
 
@@ -223,7 +229,7 @@ export function SettingsPanel({
           
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Snapping</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 p-4 rounded-xl bg-white/10 dark:bg-gray-900/20 backdrop-blur-sm border border-white/20 dark:border-white/10 shadow-inner">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="snap-edges" className="text-base">Snap to canvas edges</Label>
                 <Switch id="snap-edges" checked={!!snapEdgesEnabled} onCheckedChange={(c) => setSnapEdgesEnabled(!!c)} />
@@ -258,7 +264,7 @@ export function SettingsPanel({
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Layer Controls 
               </h3>
-            <div className="space-y-4">
+            <div className="space-y-4 p-4 rounded-xl bg-white/10 dark:bg-gray-900/20 backdrop-blur-sm border border-white/20 dark:border-white/10 shadow-inner">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="show-geometry-resize" className="text-base">Show geometry resize buttons</Label>
                 <Switch id="show-geometry-resize" checked={!!showGeometryResize} onCheckedChange={(c) => setShowGeometryResize(!!c)} />
@@ -272,7 +278,7 @@ export function SettingsPanel({
 
           <div className="space-y-4 pt-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Preview</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 p-4 rounded-xl bg-white/10 dark:bg-gray-900/20 backdrop-blur-sm border border-white/20 dark:border-white/10 shadow-inner">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="show-anchor-point" className="text-base">Show anchor point</Label>
                 <Switch id="show-anchor-point" checked={!!showAnchorPoint} onCheckedChange={(c) => setShowAnchorPoint(!!c)} />
@@ -287,7 +293,7 @@ export function SettingsPanel({
                 </div>
                 <Slider id="pinch-zoom-sensitivity" value={[pinchZoomSensitivity]} min={0.5} max={2} step={0.1} onValueChange={([c]) => setPinchZoomSensitivity(c)} />
               </div>
-            </div> 
+            </div>
           </div>
 
           <div className="space-y-4 pt-4">
@@ -312,7 +318,7 @@ export function SettingsPanel({
 
           <div className="space-y-4 pt-4">
             <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Panels</h3>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-sm p-4 rounded-xl bg-white/10 dark:bg-gray-900/20 backdrop-blur-sm border border-white/20 dark:border-white/10 shadow-inner">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="auto-close-panels" className="text-base">Auto-close right panel on narrow screens</Label>
                 <Switch id="auto-close-panels" checked={!!autoClosePanels} onCheckedChange={(c) => setAutoClosePanels(!!c)} />
