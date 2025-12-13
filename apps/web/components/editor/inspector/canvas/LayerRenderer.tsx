@@ -13,8 +13,8 @@ import { getAnchor } from '../../canvas-preview/utils/coordinates';
 import Moveable from 'react-moveable';
 import { useMoveablePointerDrag } from '../../hooks/use-moveable-pointer-drag';
 import { useEditor } from '../../editor-context';
-import useKeyframeAnimation from '@/hooks/use-keyframe';
 import useStateTransition from '@/hooks/use-state-transition';
+import useLayerAnimations from '@/hooks/use-layer-animations';
 import LiquidGlassRenderer from './LiquidGlassRenderer';
 
 interface LayerRendererProps {
@@ -83,30 +83,11 @@ export function LayerRenderer({
     gyroX,
     gyroY,
   });
-  const animation = useKeyframeAnimation({
-    keyframes: layer.animations?.enabled
-      ? layer.animations?.values || []
-      : [],
-    reverse: layer.animations?.autoreverses === 1,
-    durationMs: (layer.animations?.durationSeconds ?? 0) * 1000,
-    speed: layer.animations?.speed ?? 1,
-    delayMs,
-  });
-  const animationOverrides: Record<string, number> = {};
-  if (layer.animations?.enabled && layer.animations?.keyPath) {
-    if (layer.animations.keyPath === 'position') {
-      animationOverrides['position.x'] = (animation as Vec2).x;
-      animationOverrides['position.y'] = (animation as Vec2).y;
-    } else if (layer.animations.keyPath === 'bounds') {
-      animationOverrides['bounds.size.width'] = (animation as Size).w;
-      animationOverrides['bounds.size.height'] = (animation as Size).h;
-    } else {
-      animationOverrides[layer.animations.keyPath] = animation as number;
-    }
-  }
+  const animationOverrides = useLayerAnimations(layer.animations, delayMs);
 
   const x = transformedX ?? animationOverrides['position.x'] ?? layer.position.x;
   const y = transformedY ?? animationOverrides['position.y'] ?? layer.position.y;
+  const z = animationOverrides['zPosition'] ?? layer.zPosition;
   const rotation = animationOverrides['transform.rotation.z'] ?? layer.rotation;
   const rotationX = animationOverrides['transform.rotation.x'] ?? layer.rotationX;
   const rotationY = animationOverrides['transform.rotation.y'] ?? layer.rotationY;
@@ -152,13 +133,22 @@ export function LayerRenderer({
   const translateY = useYUp
     ? -y - ((1 - anchor.y) * height)
     : y - (anchor.y * height);
+  const translateZ = z;
+  const transforms = [
+    `translateX(${translateX}px)`,
+    `translateY(${translateY}px)`,
+    `translateZ(${translateZ}px)`,
+    `rotate(${-(rotation ?? 0)}deg)`,
+    `rotateY(${(rotationY ?? 0)}deg)`,
+    `rotateX(${-(rotationX ?? 0)}deg)`,
+  ];
   const common: React.CSSProperties = {
     position: "absolute",
     left: 0,
     top: useYUp ? '100%' : 0,
     width,
     height,
-    transform: `translateX(${translateX}px) translateY(${translateY}px) rotateX(${-(rotationX ?? 0)}deg) rotateY(${-(rotationY ?? 0)}deg) rotate(${-(rotation ?? 0)}deg)`,
+    transform: transforms.join(' '),
     transformOrigin: `${anchor.x * 100}% ${transformOriginY}%`,
     backfaceVisibility: "visible",
     display: (layer.visible === false || hiddenLayerIds.has(layer.id)) ? "none" : undefined,
