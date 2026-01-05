@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus, MoreVertical, ChevronRight, ChevronDown, Copy, Trash2, Check, Eye, EyeOff, AlertTriangle } from "lucide-react";
+import { Plus, MoreVertical, ChevronRight, ChevronDown, Copy, Trash2, Check, Eye, EyeOff, AlertTriangle, Sparkles } from "lucide-react";
 import { useEditor } from "./editor-context";
 import { useEffect, useRef, useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -341,26 +341,16 @@ export function LayersPanel() {
               {isGyro && (
                 <DropdownMenuItem onSelect={() => addTransformLayer()}>Transform Layer</DropdownMenuItem>
               )}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuItem
-                    onSelect={() => addLiquidGlassLayer()}
-                    className={!isChromium ? "text-amber-600 dark:text-amber-500" : ""}
-                  >
-                    {!isChromium && <AlertTriangle className="h-3.5 w-3.5" />}
-                    Liquid Glass Layer
-                  </DropdownMenuItem>
-                </TooltipTrigger>
-                {!isChromium && (
-                  <TooltipContent side="left" className="max-w-xs">
-                    <p className="font-semibold mb-1">Chromium-Only Feature</p>
-                    <p className="text-xs">
-                      Liquid Glass layers only work in Chromium-based browsers (Chrome, Edge, Opera).
-                      The layer will not be visible in your current browser.
-                    </p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
+              <DropdownMenuItem onSelect={() => addLiquidGlassLayer()} className={!isChromium ? "text-amber-600 dark:text-amber-500" : ""}>
+                {!isChromium && <AlertTriangle className="h-3.5 w-3.5 mr-1" />}
+                Liquid Glass Layer
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem onSelect={() => addShapeLayer("gooey" as any)} className="flex items-center">
+                <Sparkles className="h-3.5 w-3.5 mr-1" />
+                Gooey Mesh Layer
+              </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         }
@@ -512,3 +502,4 @@ export function LayersPanel() {
     </Card>
   );
 }
+
