@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>rootLayer</key>
+<dict>
+<key>class</key>
+<string>CALayer</string>
+<key>bounds</key>
+<string>{{0, 0}, {800, 800}}</string>
+<key>backgroundColor</key>
+<array>
+<real>0</real>
+<real>0</real>
+<real>0</real>
+<real>1</real>
+</array>
+<key>filters</key>
+<array>
+<dict>
+<key>name</key>
+<string>gaussianBlur</string>
+<key>inputRadius</key>
+<integer>20</integer>
+</dict>
+<dict>
+<key>name</key>
+<string>colorMatrix</string>
+<key>inputColorMatrix</key>
+<array>
+<real>1</real><real>0</real><real>0</real><real>0</real><real>0</real>
+<real>0</real><real>1</real><real>0</real><real>0</real><real>0</real>
+<real>0</real><real>0</real><real>1</real><real>0</real><real>0</real>
+<real>0</real><real>0</real><real>0</real><real>35</real><real>-15</real>
+</array>
+</dict>
+</array>
+<key>sublayers</key>
+<array>
+<dict>
+<key>class</key>
+<string>CAShapeLayer</string>
+<key>name</key>
+<string>center-blob</string>
+<key>fillColor</key>
+<array>
+<real>1</real>
+<real>1</real>
+<real>1</real>
+<real>1</real>
+</array>
+<key>path</key>
+<string>M 100,0 A 100,100 0 1,1 100,200 A 100,100 0 1,1 100,0</string>
+<key>position</key>
+<string>{400, 400}</string>
+</dict>
+<dict>
+<key>class</key>
+<string>CAShapeLayer</string>
+<key>name</key>
+<string>rotating-capsule</string>
+<key>backgroundColor</key>
+<array>
+<real>1</real>
+<real>1</real>
+<real>1</real>
+<real>1</real>
+</array>
+<key>cornerRadius</key>
+<integer>50</integer>
+<key>bounds</key>
+<string>{{0, 0}, {100, 250}}</string>
+<key>position</key>
+<string>{450, 400}</string>
+<key>animations</key>
+<dict>
+<key>transform.rotation</key>
+<dict>
+<key>type</key>
+<string>basic</string>
+<key>fromValue</key>
+<real>0</real>
+<key>toValue</key>
+<real>6.283185307179586</real>
+<key>duration</key>
+<integer>10</integer>
+<key>repeatCount</key>
+<string>huge</string>
+</dict>
+</dict>
+</dict>
+</array>
+</dict>
+</dict>
+</plist>
