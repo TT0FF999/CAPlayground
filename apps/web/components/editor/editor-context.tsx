@@ -56,7 +56,7 @@ export type EditorContextValue = {
   addImageLayerFromBlob: (blob: Blob, filename?: string) => Promise<void>;
   replaceImageForLayer: (layerId: string, file: File) => Promise<void>;
   addEmitterCellImage: (layerId: string, file: File) => Promise<void>;
-  addShapeLayer: (shape?: ShapeLayer["shape"]) => void;
+  addShapeLayer: (shape?: ShapeLayer["shape"] | "gooey") => void;
   addGradientLayer: () => void;
   addVideoLayerFromFile: (file: File) => Promise<void>;
   addEmitterLayer: () => void;
@@ -1010,7 +1010,7 @@ export function EditorProvider({
     });
   }, [addBase]);
 
-  const addShapeLayer = useCallback((shape: ShapeLayer["shape"] = "rect") => {
+  const addShapeLayer = useCallback((shape: ShapeLayer["shape"] | "gooey" = "rect") => {
     setDoc((prev) => {
       if (!prev) return prev;
       const canvasW = prev.meta.width || 390;
@@ -1028,19 +1028,62 @@ export function EditorProvider({
       const parentLayer = findById(cur.layers, cur.selectedId)
       const x = (parentLayer?.size.w || canvasW) / 2;
       const y = (parentLayer?.size.h || canvasH) / 2;
-      const layer: ShapeLayer = {
-        ...addBase("Basic Layer"),
+
+      const isGooey = shape === "gooey";
+
+      const layer: any = {
+        ...addBase(isGooey ? "Gooey Mesh" : "Basic Layer"),
         type: "shape",
+        _displayType: isGooey ? "gooey" : shape,
         position: { x, y },
         size: { w: 120, h: 120 },
-        shape,
-        fill: "#60a5fa",
-        backgroundColor: "#60a5fa",
+        shape: isGooey ? "rect" : shape,
+        fill: isGooey ? "#ffffff" : "#60a5fa",
+        backgroundColor: isGooey ? "#ffffff" : "#60a5fa",
         backgroundOpacity: 1,
-        radius: shape === "rounded-rect" ? 8 : undefined,
+        radius: (shape === "rounded-rect") ? 8 : undefined,
+        // Magic filters for Gooey effect
+        filters: isGooey ? [
+          {
+            type: "gaussianBlur",
+            radius: 20
+          },
+          {
+            type: "colorMatrix",
+            matrix: [
+              1, 0, 0, 0, 0,
+              0, 1, 0, 0, 0,
+              0, 0, 1, 0, 0,
+              0, 0, 0, 35, -15
+            ]
+          }
+        ] : [],
+        // Default blobs for Gooey Mesh
+        children: isGooey ? [
+          {
+            id: genId(),
+            name: "Blob 1",
+            type: "shape",
+            shape: "rect",
+            position: { x: 30, y: 30 },
+            size: { w: 60, h: 60 },
+            cornerRadius: 30,
+            backgroundColor: "#ffffff",
+          },
+          {
+            id: genId(),
+            name: "Blob 2",
+            type: "shape",
+            shape: "rect",
+            position: { x: 60, y: 30 },
+            size: { w: 40, h: 80 },
+            cornerRadius: 20,
+            backgroundColor: "#ffffff",
+          }
+        ] : []
       };
-      const nextLayers = insertIntoSelected(cur.layers, selId, layer);
 
+      const nextLayers = insertIntoSelected(cur.layers, selId, layer);
       const next = { ...cur, layers: nextLayers, selectedId: layer.id };
       return { ...prev, docs: { ...prev.docs, [key]: next } } as ProjectDocument;
     });
@@ -1799,3 +1842,4 @@ export function useEditor() {
   if (!ctx) throw new Error("useEditor must be used within EditorProvider");
   return ctx;
 }
+
