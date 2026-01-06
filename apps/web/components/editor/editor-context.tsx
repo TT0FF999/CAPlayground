@@ -767,7 +767,6 @@ export function EditorProvider({
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
-    // Eagerly write asset to storage
     try {
       const caFolder = (currentKey === 'floating') ? 'Floating.ca' : (currentKey === 'wallpaper') ? 'Wallpaper.ca' : 'Background.ca';
       const projName = doc?.meta.name || initialMeta.name;
@@ -810,7 +809,6 @@ export function EditorProvider({
       reader.readAsDataURL(file);
     });
 
-    // Eagerly write asset to storage
     try {
       const caFolder = (currentKey === 'floating') ? 'Floating.ca' : (currentKey === 'wallpaper') ? 'Wallpaper.ca' : 'Background.ca';
       const projName = doc?.meta.name || initialMeta.name;
@@ -1042,7 +1040,6 @@ export function EditorProvider({
         backgroundColor: isGooey ? "#ffffff" : "#60a5fa",
         backgroundOpacity: 1,
         radius: (shape === "rounded-rect") ? 8 : undefined,
-        // Magic filters for Gooey effect
         filters: isGooey ? [
           {
             type: "gaussianBlur",
@@ -1058,7 +1055,6 @@ export function EditorProvider({
             ]
           }
         ] : [],
-        // Default blobs for Gooey Mesh
         children: isGooey ? [
           {
             id: genId(),
