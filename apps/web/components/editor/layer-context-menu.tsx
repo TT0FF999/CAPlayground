@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Droplets } from "lucide-react";
 
 export type LayerContextMenuProps = {
   layer: AnyLayer;
@@ -92,6 +93,13 @@ export function LayerContextMenu({ layer, children, siblings }: LayerContextMenu
   const duplicate = async () => { duplicateLayer(layer.id); };
   const remove = async () => { deleteLayer(layer.id); };
 
+  const applyLavaEffect = () => {
+    updateLayer(layer.id, { 
+      type: "lava-lamp",
+      name: (layer as any).name || "Lava Effect Layer"
+    } as any);
+  };
+
   return (
     <>
       <ContextMenu>
@@ -101,6 +109,13 @@ export function LayerContextMenu({ layer, children, siblings }: LayerContextMenu
           <ContextMenuItem disabled={!canBringForward} onSelect={bringForward}>Bring Forward</ContextMenuItem>
           <ContextMenuItem disabled={!canSendBackward} onSelect={sendBackward}>Send Backward</ContextMenuItem>
           <ContextMenuItem disabled={!canSendToBack} onSelect={sendToBack}>Send to Back</ContextMenuItem>
+          <ContextMenuSeparator />
+          
+          <ContextMenuItem onSelect={applyLavaEffect} className="text-orange-500 focus:text-orange-400">
+            <Droplets className="mr-2 h-4 w-4" />
+            Apply Lava Effect
+          </ContextMenuItem>
+          
           <ContextMenuSeparator />
           <ContextMenuItem onSelect={openRename}>Rename…</ContextMenuItem>
           <ContextMenuItem onSelect={duplicate}>Duplicate</ContextMenuItem>
@@ -132,3 +147,4 @@ export function LayerContextMenu({ layer, children, siblings }: LayerContextMenu
     </>
   );
 }
+
