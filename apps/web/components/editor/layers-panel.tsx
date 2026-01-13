@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus, MoreVertical, ChevronRight, ChevronDown, Copy, Trash2, Check, Eye, EyeOff, AlertTriangle, Sparkles } from "lucide-react";
+import { Plus, MoreVertical, ChevronRight, ChevronDown, Copy, Trash2, Check, Eye, EyeOff, AlertTriangle, Sparkles, Droplets } from "lucide-react";
 import { useEditor } from "./editor-context";
 import { useEffect, useRef, useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -29,6 +29,7 @@ export function LayersPanel() {
     addLiquidGlassLayer,
     hiddenLayerIds,
     toggleLayerVisibility,
+    addLayer
   } = useEditor();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
@@ -112,6 +113,21 @@ export function LayersPanel() {
 
   const toggleMultiSelect = (id: string) => {
     setMultiSelectedIds((prev) => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const addLavaLayer = () => {
+    if (typeof addLayer === 'function') {
+      addLayer({
+        type: "lava-lamp",
+        name: "Lava Lamp",
+        frame: { x: 0, y: 0, width: 300, height: 300 },
+        opacity: 1,
+        isHidden: false,
+        isLocked: false,
+        primaryColor: "#FF3B30",
+        secondaryColor: "#FFCC00"
+      } as any);
+    }
   };
 
   const renderItem = (l: AnyLayer, depth: number) => {
@@ -349,6 +365,11 @@ export function LayersPanel() {
               <DropdownMenuItem onSelect={() => addShapeLayer("gooey" as any)} className="flex items-center">
                 <Sparkles className="h-3.5 w-3.5 mr-1" />
                 Gooey Mesh Layer
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onSelect={addLavaLayer} className="flex items-center text-orange-500 focus:text-orange-400">
+                <Droplets className="h-3.5 w-3.5 mr-1" />
+                Lava Lamp Layer
               </DropdownMenuItem>
 
             </DropdownMenuContent>
