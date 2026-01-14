@@ -9,91 +9,99 @@ export const LavaLampLayer: React.FC<LavaLampProps> = ({
   primaryColor = "#FF3B30", 
   secondaryColor = "#FFCC00" 
 }) => {
-  const [mousePos, setMousePos] = useState({ x: 150, y: 200 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
-    const handleMove = (e: MouseEvent | TouchEvent) => {
-      if (!containerRef.current) return;
-      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
-      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      setMousePos({
-        x: clientX - rect.left,
-        y: clientY - rect.top,
-      });
+    const update = (e: any) => {
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      const y = e.touches ? e.touches[0].clientY : e.clientY;
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        setPos({
+          x: ((x - rect.left) / rect.width) * 100,
+          y: ((y - rect.top) / rect.height) * 100,
+        });
+      }
     };
-
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('touchmove', handleMove);
+    window.addEventListener('mousemove', update);
+    window.addEventListener('touchmove', update);
     return () => {
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('touchmove', handleMove);
+      window.removeEventListener('mousemove', update);
+      window.removeEventListener('touchmove', update);
     };
   }, []);
 
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full overflow-hidden relative"
       style={{
+        width: '100%',
+        height: '100%',
         backgroundColor: '#000000',
-        transform: 'translateZ(0)',
-        WebkitTransform: 'translateZ(0)'
+        overflow: 'hidden',
+        position: 'relative',
+        zIndex: 1
       }}
     >
       <div 
-        className="w-full h-full"
         style={{
-          filter: 'url(#lava-gooey-effect) contrast(30)',
-          WebkitFilter: 'url(#lava-gooey-effect) contrast(30)',
-          width: '100%',
-          height: '100%'
+          position: 'absolute',
+          top: '20%',
+          left: '10%',
+          width: '70%',
+          height: '40%',
+          borderRadius: '50%',
+          background: primaryColor,
+          filter: 'blur(60px)',
+          opacity: 0.6,
+          animation: 'float-1 20s infinite alternate ease-in-out',
+          willChange: 'transform'
         }}
-      >
-        <div className="absolute w-64 h-64 rounded-full blur-[40px] opacity-80 animate-pulse" 
-             style={{ backgroundColor: primaryColor, top: '5%', left: '-10%', animationDuration: '10s' }} />
-        
-        <div className="absolute w-48 h-48 rounded-full blur-[40px] opacity-80" 
-             style={{ 
-               backgroundColor: primaryColor, 
-               bottom: '10%', 
-               right: '5%', 
-               animation: 'lava-float 15s infinite alternate ease-in-out' 
-             }} />
+      />
 
-        <div 
-          className="absolute w-32 h-32 rounded-full blur-[30px]"
-          style={{
-            backgroundColor: secondaryColor,
-            left: mousePos.x - 64,
-            top: mousePos.y - 64,
-            transition: 'transform 0.1s ease-out',
-            boxShadow: `0 0 50px ${secondaryColor}`
-          }}
-        />
-      </div>
+      <div 
+        style={{
+          position: 'absolute',
+          bottom: '10%',
+          right: '-5%',
+          width: '60%',
+          height: '50%',
+          borderRadius: '50%',
+          background: primaryColor,
+          filter: 'blur(70px)',
+          opacity: 0.5,
+          animation: 'float-2 25s infinite alternate ease-in-out',
+          willChange: 'transform'
+        }}
+      />
 
-      <svg style={{ position: 'absolute', width: 0, height: 0 }} xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="lava-gooey-effect" colorInterpolationFilters="sRGB">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
-            <feColorMatrix 
-              in="blur" 
-              mode="matrix" 
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" 
-              result="goo" 
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
+      <div 
+        style={{
+          position: 'absolute',
+          left: `${pos.x}%`,
+          top: `${pos.y}%`,
+          width: '150px',
+          height: '150px',
+          background: secondaryColor,
+          borderRadius: '50%',
+          filter: 'blur(40px)',
+          transform: 'translate(-50%, -50%)',
+          boxShadow: `0 0 80px ${secondaryColor}`,
+          opacity: 0.8,
+          transition: 'left 0.2s ease-out, top 0.2s ease-out',
+          willChange: 'left, top'
+        }}
+      />
 
       <style>{`
-        @keyframes lava-float {
-          from { transform: translate(0, 0) scale(1); }
-          to { transform: translate(60px, -80px) scale(1.2); }
+        @keyframes float-1 {
+          0% { transform: translate(0, 0) scale(1); }
+          100% { transform: translate(10%, 15%) scale(1.2); }
+        }
+        @keyframes float-2 {
+          0% { transform: translate(0, 0) rotate(0deg); }
+          100% { transform: translate(-15%, -10%) rotate(20deg); }
         }
       `}</style>
     </div>
