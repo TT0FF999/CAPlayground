@@ -36,37 +36,48 @@ export const LavaLampLayer: React.FC<LavaLampProps> = ({
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full bg-black overflow-hidden relative"
+      className="w-full h-full overflow-hidden relative"
       style={{
-        filter: 'url(#lava-gooey-effect) contrast(30)',
-        WebkitFilter: 'url(#lava-gooey-effect) contrast(30)',
+        backgroundColor: '#000000',
+        transform: 'translateZ(0)',
+        WebkitTransform: 'translateZ(0)'
       }}
     >
-      <div className="absolute w-64 h-64 rounded-full blur-[40px] opacity-80 animate-pulse" 
-           style={{ backgroundColor: primaryColor, top: '5%', left: '-10%', animationDuration: '10s' }} />
-      
-      <div className="absolute w-48 h-48 rounded-full blur-[40px] opacity-80" 
-           style={{ 
-             backgroundColor: primaryColor, 
-             bottom: '10%', 
-             right: '5%', 
-             animation: 'lava-float 15s infinite alternate ease-in-out' 
-           }} />
-
       <div 
-        className="absolute w-32 h-32 rounded-full blur-[30px]"
+        className="w-full h-full"
         style={{
-          backgroundColor: secondaryColor,
-          left: mousePos.x - 64,
-          top: mousePos.y - 64,
-          transition: 'transform 0.1s ease-out',
-          boxShadow: `0 0 50px ${secondaryColor}`
+          filter: 'url(#lava-gooey-effect) contrast(30)',
+          WebkitFilter: 'url(#lava-gooey-effect) contrast(30)',
+          width: '100%',
+          height: '100%'
         }}
-      />
+      >
+        <div className="absolute w-64 h-64 rounded-full blur-[40px] opacity-80 animate-pulse" 
+             style={{ backgroundColor: primaryColor, top: '5%', left: '-10%', animationDuration: '10s' }} />
+        
+        <div className="absolute w-48 h-48 rounded-full blur-[40px] opacity-80" 
+             style={{ 
+               backgroundColor: primaryColor, 
+               bottom: '10%', 
+               right: '5%', 
+               animation: 'lava-float 15s infinite alternate ease-in-out' 
+             }} />
 
-      <svg className="hidden" xmlns="http://www.w3.org/2000/svg">
+        <div 
+          className="absolute w-32 h-32 rounded-full blur-[30px]"
+          style={{
+            backgroundColor: secondaryColor,
+            left: mousePos.x - 64,
+            top: mousePos.y - 64,
+            transition: 'transform 0.1s ease-out',
+            boxShadow: `0 0 50px ${secondaryColor}`
+          }}
+        />
+      </div>
+
+      <svg style={{ position: 'absolute', width: 0, height: 0 }} xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="lava-gooey-effect">
+          <filter id="lava-gooey-effect" colorInterpolationFilters="sRGB">
             <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
             <feColorMatrix 
               in="blur" 
