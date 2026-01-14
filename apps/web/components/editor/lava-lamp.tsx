@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useMemo } from 'react';
 
 interface LavaLampProps {
   primaryColor?: string;
@@ -9,90 +9,62 @@ export const LavaLampLayer: React.FC<LavaLampProps> = ({
   primaryColor = "#FF3B30", 
   secondaryColor = "#FFCC00" 
 }) => {
-  const [mousePos, setMousePos] = useState({ x: 150, y: 200 });
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleMove = (e: MouseEvent | TouchEvent) => {
-      if (!containerRef.current) return;
-      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
-      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      setMousePos({
-        x: clientX - rect.left,
-        y: clientY - rect.top,
-      });
-    };
-
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('touchmove', handleMove, { passive: true });
-    return () => {
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('touchmove', handleMove);
-    };
-  }, []);
-
+  // On définit des positions fixes mais animées par CSS pour éviter tout calcul JS
+  // Cela permet au moteur iOS (Mika/PosterBoard) de gérer l'animation seul.
   return (
-    <div 
-      ref={containerRef}
-      className="w-full h-full relative"
-      style={{
-        backgroundColor: '#000000',
-        overflow: 'hidden',
-        zIndex: 1
-      }}
-    >
-      {/* Utilisation de dégradés flous au lieu de filtres SVG pour la compatibilité iOS Wallpaper */}
-      <div 
-        className="absolute w-[150%] h-[150%] -top-[25%] -left-[25%] opacity-70"
-        style={{
-          background: `radial-gradient(circle at 30% 20%, ${primaryColor} 0%, transparent 40%),
-                       radial-gradient(circle at 70% 80%, ${primaryColor} 0%, transparent 40%)`,
-          filter: 'blur(60px)',
-          WebkitFilter: 'blur(60px)',
-          animation: 'lava-slow-pulse 15s infinite alternate ease-in-out'
-        }}
-      />
+    <div style={{
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: '#000000',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      overflow: 'hidden'
+    }}>
+      {/* Premier calque de couleur (Base dynamique) */}
+      <div style={{
+        position: 'absolute',
+        width: '150%',
+        height: '150%',
+        top: '-25%',
+        left: '-25%',
+        background: `radial-gradient(circle at center, ${primaryColor} 0%, transparent 60%)`,
+        opacity: 0.7,
+        filter: 'blur(80px)',
+        WebkitFilter: 'blur(80px)',
+        animation: 'ca-pulse 12s infinite alternate ease-in-out'
+      }} />
 
-      {/* Bulle interactive avec flou natif */}
-      <div 
-        className="absolute w-40 h-40 rounded-full"
-        style={{
-          backgroundColor: secondaryColor,
-          left: mousePos.x,
-          top: mousePos.y,
-          transform: 'translate(-50%, -50%)',
-          filter: 'blur(45px)',
-          WebkitFilter: 'blur(45px)',
-          boxShadow: `0 0 60px ${secondaryColor}`,
-          transition: 'left 0.15s ease-out, top 0.15s ease-out',
-          opacity: 0.9,
-          willChange: 'left, top'
-        }}
-      />
+      {/* Deuxième calque (Bulle secondaire) */}
+      <div style={{
+        position: 'absolute',
+        width: '120%',
+        height: '120%',
+        bottom: '-10%',
+        right: '-10%',
+        background: `radial-gradient(circle at center, ${secondaryColor} 0%, transparent 50%)`,
+        opacity: 0.6,
+        filter: 'blur(100px)',
+        WebkitFilter: 'blur(100px)',
+        animation: 'ca-float 18s infinite alternate ease-in-out'
+      }} />
 
-      {/* Bulle flottante secondaire */}
-      <div 
-        className="absolute w-56 h-56 rounded-full opacity-60"
-        style={{
-          backgroundColor: primaryColor,
-          right: '10%',
-          bottom: '10%',
-          filter: 'blur(50px)',
-          WebkitFilter: 'blur(50px)',
-          animation: 'lava-float-native 20s infinite alternate ease-in-out'
-        }}
-      />
+      {/* Calque de fusion (Simule l'effet de l'Apple Watch) */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(to bottom, rgba(0,0,0,0.2), transparent, rgba(0,0,0,0.5))',
+        mixBlendMode: 'overlay'
+      }} />
 
       <style>{`
-        @keyframes lava-float-native {
-          0% { transform: translate(0, 0) scale(1); }
-          100% { transform: translate(-40px, -80px) scale(1.1); }
+        @keyframes ca-pulse {
+          0% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+          100% { transform: scale(1.1) translate(5%, 5%); opacity: 0.8; }
         }
-        @keyframes lava-slow-pulse {
-          0% { transform: rotate(0deg) scale(1); }
-          100% { transform: rotate(10deg) scale(1.05); }
+        @keyframes ca-float {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(-10%, -15%); }
         }
       `}</style>
     </div>
