@@ -136,6 +136,14 @@ export type LiquidGlassLayer = LayerBase & {
   type: 'liquidGlass';
 };
 
+// --- AJOUT MANQUANT ---
+export type LavaLampLayer = LayerBase & {
+  type: 'lava-lamp';
+  primaryColor?: string;
+  secondaryColor?: string;
+};
+// ----------------------
+
 export type AnyLayer =
   BasicLayer |
   ImageLayer |
@@ -146,7 +154,8 @@ export type AnyLayer =
   EmitterLayer |
   TransformLayer |
   ReplicatorLayer |
-  LiquidGlassLayer;
+  LiquidGlassLayer |
+  LavaLampLayer; // <--- AJOUTE ICI
 
 export type CAAsset = {
   path: string;
@@ -230,3 +239,5 @@ export type Animation = {
   repeatDurationSeconds?: number;
   speed?: number;
 };
+
+
