@@ -16,7 +16,7 @@ import { useEditor } from '../../editor-context';
 import useStateTransition from '@/hooks/use-state-transition';
 import useLayerAnimations from '@/hooks/use-layer-animations';
 import LiquidGlassRenderer from './LiquidGlassRenderer';
-import { LavaLampLayer } from '../../lava-lamp-layer';
+import { LavaLampLayer } from '../../lava-lamp';
 
 interface LayerRendererProps {
   layer: AnyLayer;
