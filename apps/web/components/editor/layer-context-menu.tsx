@@ -93,10 +93,12 @@ export function LayerContextMenu({ layer, children, siblings }: LayerContextMenu
   const duplicate = async () => { duplicateLayer(layer.id); };
   const remove = async () => { deleteLayer(layer.id); };
 
-  const applyLavaEffect = () => {
+  const convertToLavaLamp = () => {
     updateLayer(layer.id, { 
       type: "lava-lamp",
-      name: (layer as any).name || "Lava Effect Layer"
+      primaryColor: "#FF3B30",
+      secondaryColor: "#FFCC00",
+      name: `${(layer as any).name || "Layer"} (Lava)`
     } as any);
   };
 
@@ -111,9 +113,9 @@ export function LayerContextMenu({ layer, children, siblings }: LayerContextMenu
           <ContextMenuItem disabled={!canSendToBack} onSelect={sendToBack}>Send to Back</ContextMenuItem>
           <ContextMenuSeparator />
           
-          <ContextMenuItem onSelect={applyLavaEffect} className="text-orange-500 focus:text-orange-400">
+          <ContextMenuItem onSelect={convertToLavaLamp} className="text-orange-500 focus:text-orange-400">
             <Droplets className="mr-2 h-4 w-4" />
-            Apply Lava Effect
+            Convert to Lava Lamp
           </ContextMenuItem>
           
           <ContextMenuSeparator />
