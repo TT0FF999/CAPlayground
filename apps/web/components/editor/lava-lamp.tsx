@@ -9,99 +9,90 @@ export const LavaLampLayer: React.FC<LavaLampProps> = ({
   primaryColor = "#FF3B30", 
   secondaryColor = "#FFCC00" 
 }) => {
+  const [mousePos, setMousePos] = useState({ x: 150, y: 200 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
-    const update = (e: any) => {
-      const x = e.touches ? e.touches[0].clientX : e.clientX;
-      const y = e.touches ? e.touches[0].clientY : e.clientY;
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        setPos({
-          x: ((x - rect.left) / rect.width) * 100,
-          y: ((y - rect.top) / rect.height) * 100,
-        });
-      }
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+      if (!containerRef.current) return;
+      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
+      
+      const rect = containerRef.current.getBoundingClientRect();
+      setMousePos({
+        x: clientX - rect.left,
+        y: clientY - rect.top,
+      });
     };
-    window.addEventListener('mousemove', update);
-    window.addEventListener('touchmove', update);
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('touchmove', handleMove, { passive: true });
     return () => {
-      window.removeEventListener('mousemove', update);
-      window.removeEventListener('touchmove', update);
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('touchmove', handleMove);
     };
   }, []);
 
   return (
     <div 
       ref={containerRef}
+      className="w-full h-full relative"
       style={{
-        width: '100%',
-        height: '100%',
         backgroundColor: '#000000',
         overflow: 'hidden',
-        position: 'relative',
         zIndex: 1
       }}
     >
+      {/* Utilisation de dégradés flous au lieu de filtres SVG pour la compatibilité iOS Wallpaper */}
       <div 
+        className="absolute w-[150%] h-[150%] -top-[25%] -left-[25%] opacity-70"
         style={{
-          position: 'absolute',
-          top: '20%',
-          left: '10%',
-          width: '70%',
-          height: '40%',
-          borderRadius: '50%',
-          background: primaryColor,
+          background: `radial-gradient(circle at 30% 20%, ${primaryColor} 0%, transparent 40%),
+                       radial-gradient(circle at 70% 80%, ${primaryColor} 0%, transparent 40%)`,
           filter: 'blur(60px)',
-          opacity: 0.6,
-          animation: 'float-1 20s infinite alternate ease-in-out',
-          willChange: 'transform'
+          WebkitFilter: 'blur(60px)',
+          animation: 'lava-slow-pulse 15s infinite alternate ease-in-out'
         }}
       />
 
+      {/* Bulle interactive avec flou natif */}
       <div 
+        className="absolute w-40 h-40 rounded-full"
         style={{
-          position: 'absolute',
-          bottom: '10%',
-          right: '-5%',
-          width: '60%',
-          height: '50%',
-          borderRadius: '50%',
-          background: primaryColor,
-          filter: 'blur(70px)',
-          opacity: 0.5,
-          animation: 'float-2 25s infinite alternate ease-in-out',
-          willChange: 'transform'
-        }}
-      />
-
-      <div 
-        style={{
-          position: 'absolute',
-          left: `${pos.x}%`,
-          top: `${pos.y}%`,
-          width: '150px',
-          height: '150px',
-          background: secondaryColor,
-          borderRadius: '50%',
-          filter: 'blur(40px)',
+          backgroundColor: secondaryColor,
+          left: mousePos.x,
+          top: mousePos.y,
           transform: 'translate(-50%, -50%)',
-          boxShadow: `0 0 80px ${secondaryColor}`,
-          opacity: 0.8,
-          transition: 'left 0.2s ease-out, top 0.2s ease-out',
+          filter: 'blur(45px)',
+          WebkitFilter: 'blur(45px)',
+          boxShadow: `0 0 60px ${secondaryColor}`,
+          transition: 'left 0.15s ease-out, top 0.15s ease-out',
+          opacity: 0.9,
           willChange: 'left, top'
         }}
       />
 
+      {/* Bulle flottante secondaire */}
+      <div 
+        className="absolute w-56 h-56 rounded-full opacity-60"
+        style={{
+          backgroundColor: primaryColor,
+          right: '10%',
+          bottom: '10%',
+          filter: 'blur(50px)',
+          WebkitFilter: 'blur(50px)',
+          animation: 'lava-float-native 20s infinite alternate ease-in-out'
+        }}
+      />
+
       <style>{`
-        @keyframes float-1 {
+        @keyframes lava-float-native {
           0% { transform: translate(0, 0) scale(1); }
-          100% { transform: translate(10%, 15%) scale(1.2); }
+          100% { transform: translate(-40px, -80px) scale(1.1); }
         }
-        @keyframes float-2 {
-          0% { transform: translate(0, 0) rotate(0deg); }
-          100% { transform: translate(-15%, -10%) rotate(20deg); }
+        @keyframes lava-slow-pulse {
+          0% { transform: rotate(0deg) scale(1); }
+          100% { transform: rotate(10deg) scale(1.05); }
         }
       `}</style>
     </div>
