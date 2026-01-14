@@ -16,6 +16,7 @@ import { useEditor } from '../../editor-context';
 import useStateTransition from '@/hooks/use-state-transition';
 import useLayerAnimations from '@/hooks/use-layer-animations';
 import LiquidGlassRenderer from './LiquidGlassRenderer';
+import { LavaLampLayer } from '../../lava-lamp-layer';
 
 interface LayerRendererProps {
   layer: AnyLayer;
@@ -233,6 +234,12 @@ export function LayerRenderer({
             radius={layer.cornerRadius || 0}
           />
         )}
+        {layer.type === "lava-lamp" && (
+          <LavaLampLayer
+            primaryColor={(layer as any).primaryColor}
+            secondaryColor={(layer as any).secondaryColor}
+          />
+        )}
         {layer.type === "text" && (
           <TextRenderer layer={layer} />
         )}
@@ -266,3 +273,5 @@ export function LayerRenderer({
     </LayerContextMenu>
   )
 }
+
+
